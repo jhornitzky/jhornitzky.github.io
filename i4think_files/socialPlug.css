@@ -1,0 +1,119 @@
+.hoverItem {
+	font-family: arial;
+	position: relative;
+}
+
+.hoverItem a {
+	font-weight: bold;
+	text-decoration: none;
+	word-wrap: break-word;
+	color: #FFF;
+}
+
+.hoverItem a.hashtag {
+	font-size: 26px;
+}
+
+.hoverItem .small {
+	margin-top: 5px;
+	font-style: italic;
+	font-size: 13px;
+}
+
+.list {
+	width: 625px;
+	margin: 0 auto;
+	color: #555;
+}
+
+.list .hoverItem {
+	font-size: 26px;
+	font-weight: bold;
+	padding-bottom: 20px;
+	padding-top: 20px;
+	border-bottom: 1px solid #EEE;
+}
+
+.list .hoverItem a {
+	color: #000;
+}
+
+.list .hoverItem .text img {
+	position: absolute;
+	left: -130px;
+	top: 25px;
+}
+
+.list .hoverItem .tiny {
+	font-size: 14px;
+}
+
+.grid .hoverItem.one {
+	background-color: #3a4050;
+}
+
+.grid .hoverItem.two {
+	background-color: #555;
+}
+
+.grid .hoverItem.three {
+	background-color: #777;
+}
+
+.grid .hoverItem.four {
+	background-color: #AAA;
+}
+
+.grid .hoverItem {
+	background-color: #3a4040;
+	width: 280px;
+	float: left;
+	padding: 20px 10px;
+	font-size: 14px;
+	color: #FFF;
+	overflow: hidden;
+	margin: 10px;
+}
+
+.grid .hoverItem .text img {
+	display: none;
+}
+
+.hoverItem.more {
+	font-weight:bold;
+	height:auto;
+	border-bottom:none !important;
+	width:100% !important;
+	margin:0 !important;
+	background-color:transparent !important;
+	color:#555;
+}
+
+.hoverItem.more a {
+	color:#000;
+}
+
+.hoverItem.more .small {
+	font-style:normal;
+}
+/*
+     FILE ARCHIVED ON 00:22:44 Sep 30, 2013 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 13:19:58 Apr 25, 2018.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+*/
+/*
+playback timings (ms):
+  LoadShardBlock: 308.815 (3)
+  esindex: 0.009
+  captures_list: 343.171
+  CDXLines.iter: 14.51 (3)
+  PetaboxLoader3.datanode: 318.44 (4)
+  exclusion.robots: 0.313
+  exclusion.robots.policy: 0.288
+  RedisCDXSource: 16.137
+  PetaboxLoader3.resolve: 60.091
+  load_resource: 114.543
+*/
