@@ -4,3 +4,6 @@
 [submodule "dnace"]
 	path = dnace
 	url = https://github.com/HealthHackAu2016/DNACE
+[submodule "yolograph"]
+	path = yolograph
+	url = https://jhornitzky@github.com/jhornitzky/yolograph.git
