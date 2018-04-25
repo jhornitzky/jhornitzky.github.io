@@ -7,3 +7,6 @@
 [submodule "yolograph"]
 	path = yolograph
 	url = https://jhornitzky@github.com/jhornitzky/yolograph.git
+[submodule "hashtagoflife"]
+	path = hashtagoflife
+	url = https://jhornitzky@github.com/jhornitzky/hashtagoflife.git
