@@ -1,6 +1,3 @@
-[submodule "bloom"]
-	path = bloom
-	url = https://jhornitzky@github.com/jhornitzky/bloom.git
 [submodule "dnace"]
 	path = dnace
 	url = https://github.com/HealthHackAu2016/DNACE
