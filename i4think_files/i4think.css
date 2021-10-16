@@ -1,120 +1,91 @@
-.clearfix:after {
-	content: ".";
-	display: block;
-	clear: both;
-	visibility: hidden;
-	line-height: 0;
-	height: 0;
-	padding-bottom: 5px;
-}
-
-.clearfix {
-	display: inline-block;
-}
-
-html .clearfix {
-	display: block;
-}
-
-* html .clearfix {
-	height: 1%;
-}
-
-html {
-	font-size: 1.2em;
-}
-
-body { 
+body {
 	background-position: center center;
 	background-repeat: no-repeat;
 	font-family: 'Helventica Neue', Arial;
 }
 
 a {
-	text-decoration:none;
-}
-
-img {
-	border: none;
+	text-decoration: none;
 }
 
 h1, h2, h3 {
-	font-weight:lighter;
+	font-weight: lighter;
 }
 
-.hoverItem {
-	margin: 10px;
-	margin-top:0;
-	float: left;
-	position: relative;
+h1 {
+	font-size: 5rem;
+	margin-bottom: 0;
+}
+
+h2 {
+	font-size: 3rem;
+	margin-bottom: 0;
+}
+
+.page {
+	width: 960px;
+	margin: 0 auto;
+	max-width: 100%;
+}
+
+.new-bits {
+	display: flex;
+	flex-wrap: wrap;
+}
+
+.hover-item {
+	margin: 0.5rem;
+	margin-left: 0;
+	margin-bottom: 0;
 	text-align: left;
-	width:280px; 
-	font-size:14px;
-	float:left;
-	color:#FFF;
-	background-color:#DDD;
-	padding:20px 10px;
+	width: 27%;
+	color: #FFF;
+	background-color: #DDD;
+	padding: 1rem;
 }
 
-.hoverItem.header {
-	width:100%;
-	clear:both;
-	background-color:transparent;
-	color:#000;
-	padding:0;
-	padding-top:10px;
-	padding-bottom:0;
-	font-size:36px;
-	margin:0;
-	margin-left:7px;
-	font-weight:lighter;
+@media only screen and (max-width: 480px) {
+	.new-bits {
+		display: block;
+		flex-wrap: nowrap;
+	}
+
+	.hover-item {
+		width: 100%;
+	}
 }
 
-.hoverItem a {
-	color:#FFF;
+.hover-item.header {
+	background-color: transparent;
+	color: #000;
+	font-size: 2rem;
+	font-weight: lighter;
 }
 
-.hoverItem a:hover {
+.hover-item a {
+	color: #FFF;
+}
+
+.hover-item a:hover {
 	text-shadow: 0 0 20px #FFF;
 }
 
-.hoverItem .header a {
-	font-size:42px;
-	text-transform:lowercase;
+.hover-item .header a {
+	font-size: 2rem;
+	text-transform: lowercase;
 }
 
-.hoverItem .text a {
-	font-weight:bold;
-	font-size:13px;
+.hover-item .desc {
+	font-size: 0.9rem;
 }
 
-.hoverItem.sp .text {
-	font-size:13px;
+.hover-item.exp a {
+	color: #555;
+	font-weight: bold;
 }
 
-.hoverItem .text {
-	font-size:20px;
-}
-
-.hoverItem .desc {
-	font-size:14px;
-}
-
-.hoverItem.exp a {
-	color:#555;
-	font-weight:bold;
-}
-
-.hoverItem.exp a:hover {
-	color:rgb(27, 161, 226);
-}
-
-.wwhite,div.xbuddyFloater.Right.wwhite {
-	border-color: #AAA;
-}
-
-.wwhite {
-	color: #000;
+.hover-item.exp a:hover {
+	color: rgb(27, 161, 226);
 }
 
 .wblue {
@@ -155,39 +126,4 @@ h1, h2, h3 {
 
 .wborder:hover {
 	background-color: rgba(0, 0, 0, 0.3);
-}
-h1 {
-	font-size: 90px;
-	margin-bottom:0;
-}
-h1 span {
-	color: #AAA
-}
-.moreLinks {
-	border-top: 2px dotted #FFF;
-	padding:0; float:right; 
-	padding-right:20px !important; 
-	padding-left:0px;
-}
-.moreLinks>div {
-	float: left;
-	margin:4px;
-}
-.clearfix {
-	clear: both;
-	height: 0;
-}
-.page {
-	width: 960px;
-	margin: 0 auto;
-	max-width: 100%;
-}
-.page .title {
-	float:left;margin-left:5px;
-}
-.details {
-	clear: both; padding:0; margin: 0;
-	padding-top:5px;
-	font-size:20px;
-	color:#888;
 }
