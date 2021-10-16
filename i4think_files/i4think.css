@@ -44,7 +44,7 @@ h2 {
 	padding: 1rem;
 }
 
-@media only screen and (max-width: 480px) {
+@media screen and (max-width: 480px) {
 	.new-bits {
 		display: block;
 		flex-wrap: nowrap;
@@ -52,6 +52,7 @@ h2 {
 
 	.hover-item {
 		width: 100%;
+		display: block;
 	}
 }
 
