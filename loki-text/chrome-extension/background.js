@@ -63,7 +63,7 @@ function runLoki() {
         'Zapfino',
     ];
 
-    const pageElements = document.querySelectorAll('h1,h2,h3,h4,h5,h6,a,p,code');
+    const pageElements = document.querySelectorAll('h1,h2,h3,h4,h5,h6,a,p,code,li,figcaption,input,textarea,button,label,time,div');
 
     for (i=0; i < pageElements.length; i++) {
         min = 0;
