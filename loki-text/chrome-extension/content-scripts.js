@@ -1,0 +1,8 @@
+function inject_script(file_path, tag) {
+    var node = document.getElementsByTagName(tag)[0];
+    var script = document.createElement('script');
+    script.setAttribute('type', 'text/javascript');
+    script.setAttribute('src',file_path);
+    node.appendChild(script);
+}
+inject_script(chrome.extension.getURL('loki-text.js'), 'body');

@@ -9,8 +9,18 @@
         "scripting",
         "alarms"
     ],
+    "content_scripts":[
+        {
+            "matches":["<all_urls>"],
+            "js":["content-scripts.js"]
+        }
+    ],
+    "web_accessible_resources":[
+        "loki-text.js"
+    ],
     "background": {
-        "service_worker": "background.js"
+        "service_worker": "background.js",
+        "persistent":false
     },
     "icons":{
         "16": "favicon-16x16.png",

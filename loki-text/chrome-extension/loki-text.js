@@ -1,5 +1,5 @@
-function runLoki() {
-    const fonts = [
+let lokiText = {
+    fonts: [
         'American Typewriter',
         'Andale Mono',
         'Arial',
@@ -61,25 +61,24 @@ function runLoki() {
         'Trebuchet MS',
         'Verdana',
         'Zapfino',
-    ];
+    ],
+    timer:null,
+    toggleLoki:function() {
+        if (!lokiText.timer) {
+            lokiText.timer = setInterval(this.runLoki,500);
+        } else {
+            clearInterval(lokiText.timer);
+        }
+    },
+    runLoki:function() {
+        const pageElements = document.querySelectorAll('h1,h2,h3,h4,h5,h6,a,p,code');
 
-    const pageElements = document.querySelectorAll('h1,h2,h3,h4,h5,h6,a,p,code');
-
-    for (i=0; i < pageElements.length; i++) {
-        min = 0;
-        max = fonts.length;
-        const randomNumber = Math.floor(Math.random() * (max - min + 1)) + min;
-        pageElements[i].style.fontFamily = fonts[randomNumber];
+        for (i = 0; i < pageElements.length; i++) {
+            min = 0;
+            max = lokiText.fonts.length;
+            const randomNumber = Math.floor(Math.random() * (max - min + 1)) + min;
+            pageElements[i].style.fontFamily = lokiText.fonts[randomNumber];
+        }
     }
 }
 
-function msgLoki() {
-    
-}
-
-chrome.action.onClicked.addListener((tab) => {
-    chrome.scripting.executeScript({
-        target: { tabId: tab.id },
-        function: msgLoki
-    });
-});
