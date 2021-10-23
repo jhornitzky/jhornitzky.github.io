@@ -32,7 +32,6 @@
             <div id="rendered-text" class="flex justify-center items-center h-screen text-9xl p-4 max-w-full bg-black text-white overflow-hidden">
                 <div v-for="(letter, index) in letters" class="inline-block">
                     <span :style="letter.style" v-html="letter.letter"></span>
-                    <span class="hidden">{{seed}}</span>
                 </div>
             </div>
             <div>
@@ -153,7 +152,7 @@
                         this.letters = letterList;
                     },
                     randomFont:function() {
-                        let randomNumber = this.generateRandomNumber(0, this.fonts.length);
+                        const randomNumber = this.generateRandomNumber(0, this.fonts.length);
                         return this.fonts[randomNumber];
                     },
                     generateRandomNumber(min, max) {
