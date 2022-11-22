@@ -1,0 +1,105 @@
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Lockdraw - trace a picture on your phone or tablet</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+        <script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
+        <script src="https://cdn.tailwindcss.com"></script>
+    </head>
+    <body class="bg-slate-500"> 
+        <div class="lock-toggle fixed top-5 left-5 h-20 w-20 py-3 z-50 text-5xl text-center rounded-full bg-emerald-200">
+            <span class="lock-icon inline-block align-middle">🔓</span>
+        </div>
+        <div class="canvas fixed left-0 right-0 top-0 bottom-0">
+            <div id="gesture-area" class="resize-drag box-border" style="touch-action: none;">
+                <img id="scale-element" src=""/>
+            </div>
+        </div>
+        <div class="controls fixed bottom-5 left-5 right-5 p-5 bg-black opacity-50 rounded-full overflow-hidden">
+            <label class="text-white font-bold">Choose image to trace</label>
+            <input id="image-upload" class="text-white" type="file" name="image-upload" accept=".jpg, .jpeg, .png, .webp"/> 
+        </div>
+    </body>
+    <script type="text/javascript">
+        //drag listener
+        function dragMoveListener(event) {
+            var target = event.target
+            // keep the dragged position in the data-x/data-y attributes
+            var x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx
+            var y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy
+
+            // translate the element
+            target.style.transform = 'translate(' + x + 'px, ' + y + 'px)'
+
+            // update the posiion attributes
+            target.setAttribute('data-x', x)
+            target.setAttribute('data-y', y)
+        }
+
+        // this function is used later in the resizing and gesture demos
+        window.dragMoveListener = dragMoveListener
+
+        //resize, drag and drop
+        var angleScale = {
+                angle: 0,
+                scale: 1
+            }
+            var gestureArea = document.getElementById('gesture-area')
+            var scaleElement = document.getElementById('scale-element')
+            var resetTimeout
+
+            interact(gestureArea)
+                .gesturable({
+                    listeners: {
+                        start(event) {
+                            angleScale.angle -= event.angle
+
+                            clearTimeout(resetTimeout)
+                            scaleElement.classList.remove('reset')
+                        },
+                        move(event) {
+                            // document.body.appendChild(new Text(event.scale))
+                            var currentAngle = event.angle + angleScale.angle
+                            var currentScale = event.scale * angleScale.scale
+
+                            scaleElement.style.transform =
+                                'rotate(' + currentAngle + 'deg)' + 'scale(' + currentScale + ')'
+
+                            // uses the dragMoveListener from the draggable demo above
+                            dragMoveListener(event)
+                        },
+                        end(event) {
+                            angleScale.angle = angleScale.angle + event.angle
+                            angleScale.scale = angleScale.scale * event.scale
+
+                            resetTimeout = setTimeout(reset, 1000)
+                            scaleElement.classList.add('reset')
+                        }
+                    }
+                })
+                .draggable({
+                    listeners: { move: dragMoveListener }
+                })
+
+            function reset() {
+                scaleElement.style.transform = 'scale(1)'
+
+                angleScale.angle = 0
+                angleScale.scale = 1
+            }
+
+        //image setup
+        let imageUpload = document.getElementById("image-upload");
+        // display file name if file has been selected
+        imageUpload.onchange = function () {
+            let input = this.files[0];
+            if (input) {
+                const reader = new FileReader();
+                reader.addEventListener('load', (event) => {
+                    document.getElementById("scale-element").src = event.target.result;
+                });
+                reader.readAsDataURL(input);
+            } 
+        };
+    </script>
+</html>
