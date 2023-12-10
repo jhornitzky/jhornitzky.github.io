@@ -1,0 +1,38 @@
+<html>
+
+<head>
+    <title>Internet Invaders</title>
+    <meta name="description" content="Turn any page into a game!" />
+    <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+    <link rel="manifest" href="site.webmanifest">
+    <style>
+        .input {
+            transition: border 0.2s ease-in-out;
+            min-width: 280px
+        }
+
+        .input:focus+.label,
+        .input:active+.label,
+        .input.filled+.label {
+            color: #667eea;
+        }
+
+        .label {
+            font-size: .75rem;
+            transition: all 0.2s ease-out;
+            top: -0.1rem;
+            left: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+       
+    </div>
+</body>
+
+</html>
