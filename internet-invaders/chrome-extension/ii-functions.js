@@ -7,26 +7,60 @@ iiRunner = {
         }
     },
     init:function() {
-        iiRunner.applyStyles();
+        iiRunner.createHtml();
+        iiRunner.startGame();
     },
-    applyStyles:function() {
+    createHtml:function() {
         var body = document.getElementsByTagName('body')[0];
-        body.style.transform = 'perspective(400px) rotateX(45deg) translateY(-400px)';
-        body.style.marginLeft = body.getBoundingClientRect.width+'px';
-
-        var images = document.getElementsByTagName('img');
-        for (i = 0; i < images.length; i++) {
-            images[i].style.transform = 'rotateX(-45deg)';
-        }
+        var div = document.createElement("div");
+        div.id = "ii-container";
+        div.style = "position:fixed; left:0; right:0; top:0; bottom:0; z-index:999";
+        var canvas = document.createElement("canvas");
+        canvas.style = "width:100%; height:100%";
+        div.appendChild(canvas);
+        body.appendChild(div);
     },
-    didCollide:function(object1, object2) {
-        if (object1.x < object2.x + object2.width &&
-            object1.x + object1.width > object2.x &&
-            object1.y < object2.y + object2.height &&
-            object1.height + object1.y > object2.y) {
-                return true;
-            } else {
-                return false;
+    startGame:function() {
+        console.log(document.querySelector("#ii-container canvas"));
+
+        // initialize context
+        kaboom({
+            canvas: document.querySelector("#ii-container canvas")
+        });
+
+        //get elements for later
+        var images = document.getElementsByTagName('img');
+        var SPEED = 480;
+
+        scene("game", () => {
+            
+            //add baddies (images)
+            for (var i = 0; i < images.length; i++) {
+                var img = images[i];
+                loadSprite(img.src, img.src);
+                var scaleImg = (img.getBoundingClientRect().width / img.naturalWidth != NaN) ? img.getBoundingClientRect().width / img.naturalWidth : 1;
+                add([
+                    sprite(img.src),
+                    pos(img.getBoundingClientRect().left, img.getBoundingClientRect().top+400),
+                    scale(scaleImg),
+                    move(UP, SPEED),
+                    'image'
+                ]);
             }
+
+            //add player
+            /*
+            var player = add([
+                sprite("player"),
+                pos(width() / 2, height() / 2),
+                scale(0.5),
+                "player"
+            ]);
+            */
+
+
+        });
+        
+        go("game");
     }
 }
