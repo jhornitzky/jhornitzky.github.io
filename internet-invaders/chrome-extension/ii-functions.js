@@ -25,7 +25,8 @@ iiRunner = {
 
         // initialize context
         kaboom({
-            canvas: document.querySelector("#ii-container canvas")
+            canvas: document.querySelector("#ii-container canvas"),
+            background: [0,0,0,0]
         });
 
         //get elements for later
