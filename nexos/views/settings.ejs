@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Nexos - Settings</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="brand">
+        <h1>Nexos</h1>
+        <p>Sources</p>
+      </div>
+      <nav>
+        <a href="/">Briefing</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="settings">
+        <h2>Add Source</h2>
+        <form method="POST" action="/settings/add" class="source-form">
+          <label>
+            Name
+            <input type="text" name="name" required />
+          </label>
+          <label>
+            URL
+            <input type="url" name="url" required />
+          </label>
+          <label>
+            Lens Prompt
+            <textarea name="lens_prompt" rows="4" required></textarea>
+          </label>
+          <button type="submit">Add Source</button>
+        </form>
+      </section>
+
+      <section class="settings">
+        <h2>Existing Sources</h2>
+        <% if (sources.length === 0) { %>
+          <p class="empty">No sources yet.</p>
+        <% } %>
+
+        <% sources.forEach((source) => { %>
+          <form method="POST" action="/settings/update/<%= source.id %>" class="source-card">
+            <label>
+              Name
+              <input type="text" name="name" value="<%= source.name %>" required />
+            </label>
+            <label>
+              URL
+              <input type="url" name="url" value="<%= source.url %>" required />
+            </label>
+            <label>
+              Lens Prompt
+              <textarea name="lens_prompt" rows="4" required><%= source.lens_prompt %></textarea>
+            </label>
+            <div class="actions">
+              <button type="submit">Update</button>
+              <button type="submit" formaction="/settings/delete/<%= source.id %>" class="danger">
+                Delete
+              </button>
+            </div>
+          </form>
+        <% }) %>
+      </section>
+    </main>
+  </body>
+</html>

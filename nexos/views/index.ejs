@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Nexos - Daily Briefing</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="brand">
+        <h1>Nexos</h1>
+        <p>Finite Operating System</p>
+      </div>
+      <nav>
+        <a href="/settings">Settings</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="briefing">
+        <h2>Today</h2>
+        <% if (Object.keys(grouped).length === 0) { %>
+          <p class="empty">No items yet. Run fetcher or add sources.</p>
+        <% } %>
+
+        <% Object.keys(grouped).forEach((sourceName) => { %>
+          <div class="source-block">
+            <h3><%= sourceName %></h3>
+            <ul>
+              <% grouped[sourceName].forEach((item) => { %>
+                <li>
+                  <a href="<%= item.url %>" target="_blank" rel="noopener noreferrer">
+                    <%= item.title %>
+                  </a>
+                  <span class="meta"><%= item.summary %></span>
+                </li>
+              <% }) %>
+            </ul>
+          </div>
+        <% }) %>
+      </section>
+    </main>
+  </body>
+</html>

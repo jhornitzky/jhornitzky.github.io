@@ -1,0 +1,126 @@
+@import "tailwindcss";
+
+body {
+  background-color: #f9fafb;
+  color: #111827;
+  font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+.touch-target {
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+}
+
+.btn-primary {
+  background-color: #0284c7;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  transition: background-color 0.2s;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+}
+
+.btn-primary:hover {
+  background-color: #0369a1;
+}
+
+.btn-primary:active {
+  background-color: #075985;
+}
+
+.btn-secondary {
+  background-color: white;
+  color: #374151;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  border: 1px solid #d1d5db;
+  transition: background-color 0.2s;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+}
+
+.btn-secondary:hover {
+  background-color: #f9fafb;
+}
+
+.btn-secondary:active {
+  background-color: #f3f4f6;
+}
+
+.score-button {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  font-size: 1.125rem;
+  transition: all 0.2s;
+}
+
+.score-button:active {
+  transform: scale(0.95);
+}
+
+.score-button.selected {
+  box-shadow: 0 0 0 2px #0284c7;
+}
+
+.checkbox-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  background-color: white;
+  border-radius: 0.5rem;
+  border: 1px solid #e5e7eb;
+  min-height: 44px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.checkbox-item:hover {
+  background-color: #f9fafb;
+}
+
+.checkbox-item:active {
+  background-color: #f3f4f6;
+}
+
+.checkbox-item input[type="checkbox"] {
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 0.25rem;
+  border-color: #d1d5db;
+  color: #0ea5e9;
+  cursor: pointer;
+}
+
+.checkbox-item input[type="checkbox"]:focus {
+  ring: 2px;
+  ring-color: #0ea5e9;
+}
+
+.heatmap-cell {
+  border-radius: 0.125rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.heatmap-cell:hover {
+  box-shadow: 0 0 0 2px #38bdf8;
+}
