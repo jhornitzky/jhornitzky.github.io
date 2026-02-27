@@ -17,7 +17,7 @@ export function parseDate(dateStr) {
 export function formatDisplayDate(dateStr) {
   const date = parseDate(dateStr);
   return date.toLocaleDateString('en-GB', {
-    weekday: 'long',
+    weekday: 'short',
     day: 'numeric',
     month: 'short'
   });

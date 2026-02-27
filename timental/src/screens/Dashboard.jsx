@@ -67,7 +67,7 @@ function Dashboard() {
       <main className="px-4 py-6">
 
         {/* Days Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-[repeat(auto-fill,minmax(150px,1fr))] gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-3">
           {dates.map((date) => {
             const log = logsMap[date];
             const hasAllCriteria = log && log.criteriaMet?.length === 11;
@@ -82,42 +82,34 @@ function Dashboard() {
                 key={date}
                 ref={isToday ? todayRef : null}
                 onClick={() => handleDayClick(date)}
-                className={`bg-white rounded-lg p-3 shadow-sm flex flex-col justify-center cursor-pointer relative hover:shadow-md transition-shadow h-28 ${isToday ? 'ring-2 ring-primary-600 ring-opacity-50' : ''
+                className={`${colorClass} rounded-2xl p-4 shadow-sm flex items-center gap-4 cursor-pointer relative hover:shadow-md transition-all h-28 ${isToday ? 'ring-2 ring-blue-600 ring-offset-2' : ''
                   }`}
               >
-                {/* Visual score indicator bar */}
-                <div className={`absolute top-0 left-0 right-0 h-1.5 rounded-t-lg ${colorClass}`}></div>
+                {/* Large Score on Left */}
+                <div className="flex flex-col items-center justify-center shrink-0 min-w-[4rem]">
+                  <span className="text-5xl font-black text-gray-900 leading-none">
+                    {log?.score ? log.score : '-'}
+                  </span>
+                  {hasAllCriteria && (
+                    <div className="mt-2 w-3 h-3 bg-blue-600 rounded-full border-2 border-white shadow-sm"></div>
+                  )}
+                </div>
 
-                <div className="flex items-center gap-4 h-full relative z-0">
-                  {/* Large Score on Left */}
-                  <div className={`w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 ${colorClass} shadow-sm relative`}>
-                    <span className="text-2xl font-black text-gray-800">
-                      {log?.score ? log.score : '-'}
-                    </span>
-                    {hasAllCriteria && (
-                      <div className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-blue-600 rounded-full border-2 border-white shadow-sm"></div>
+                {/* Date and Details on Right */}
+                <div className="flex flex-col justify-center min-w-0">
+                  <h3 className="text-lg font-bold text-gray-900 leading-tight">
+                    {isToday ? 'Today' : formatDisplayDate(date)}
+                  </h3>
+                  {isDifferentYear && <span className="text-xs font-bold text-gray-700 opacity-60 mt-0.5">{dateYear}</span>}
+
+                  <div className="mt-2">
+                    {log ? (
+                      <div className="text-xs font-bold text-gray-800 opacity-70">
+                        {percentage}%
+                      </div>
+                    ) : (
+                      <span className="text-xs text-gray-700 opacity-60 italic">No entry</span>
                     )}
-                  </div>
-
-                  {/* Date and Details on Right */}
-                  <div className="flex flex-col justify-center min-w-0">
-                    <h3 className="text-base font-bold text-gray-900 leading-tight truncate">
-                      {isToday ? 'Today' : formatDisplayDate(date).split(',')[0]}
-                    </h3>
-                    <div className="text-xs text-gray-500 mt-0.5 whitespace-nowrap overflow-hidden">
-                      {formatDisplayDate(date).split(',')[1]?.trim()}
-                      {isDifferentYear && <span className="ml-1 opacity-75">{dateYear}</span>}
-                    </div>
-
-                    <div className="mt-1.5 text-xs">
-                      {log ? (
-                        <div className="inline-flex px-1.5 py-0.5 bg-gray-100 rounded text-[10px] font-semibold text-gray-600">
-                          {percentage}%
-                        </div>
-                      ) : (
-                        <span className="text-[10px] text-gray-400 italic">No entry</span>
-                      )}
-                    </div>
                   </div>
                 </div>
               </div>
