@@ -4,15 +4,40 @@ import { db, dbHelpers } from '../db';
 import { getDateRange, getHeatmapColor, getToday, formatDisplayDate, calculateCriteriaPercentage } from '../utils/helpers';
 import { scheduleDailyReminderCheck } from '../utils/notifications';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { Settings } from 'lucide-react';
+import { Settings, HelpCircle } from 'lucide-react';
 import SettingsModal from '../components/SettingsModal';
+import OnboardingJourney from '../components/OnboardingJourney';
 
 function Dashboard() {
   const navigate = useNavigate();
   const todayRef = useRef(null);
   const [showSettings, setShowSettings] = useState(false);
+  const [showOnboarding, setShowOnboarding] = useState(false);
   const [visibleDays, setVisibleDays] = useState(90);
   const DAYS_INCREMENT = 90;
+
+  // Check if onboarding is complete
+  const onboardingComplete = useLiveQuery(
+    () => dbHelpers.getSetting('onboarding_complete', false),
+    []
+  );
+
+  useEffect(() => {
+    if (onboardingComplete === false) {
+      // Delay slightly for better transition
+      const timer = setTimeout(() => setShowOnboarding(true), 500);
+      return () => clearTimeout(timer);
+    }
+  }, [onboardingComplete]);
+
+  const handleOnboardingComplete = async () => {
+    await dbHelpers.setSetting('onboarding_complete', true);
+    setShowOnboarding(false);
+  };
+
+  const handleStartTutorial = () => {
+    setShowOnboarding(true);
+  };
 
   // Get logs from database (reactive)
   const logs = useLiveQuery(
@@ -90,18 +115,26 @@ function Dashboard() {
               className="h-8 w-auto object-contain"
             />
           </div>
-          <button
-            onClick={() => setShowSettings(true)}
-            className="p-2 text-gray-600 hover:text-gray-900 active:bg-gray-100 rounded-lg transition-colors"
-          >
-            <Settings size={24} />
-          </button>
+          <div className="flex items-center gap-1">
+            <button
+              onClick={handleStartTutorial}
+              title="Show Tutorial"
+              className="p-2 text-gray-500 hover:text-gray-900 active:bg-gray-100 rounded-lg transition-colors"
+            >
+              <HelpCircle size={24} />
+            </button>
+            <button
+              onClick={() => setShowSettings(true)}
+              className="p-2 text-gray-600 hover:text-gray-900 active:bg-gray-100 rounded-lg transition-colors"
+            >
+              <Settings size={24} />
+            </button>
+          </div>
         </div>
       </header>
 
       {/* Main Content */}
       <main className="px-4 py-6">
-
         {/* Days Grid */}
         <div className="grid grid-cols-2 sm:grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-3">
           {dates.map((date) => {
@@ -164,8 +197,17 @@ function Dashboard() {
         </div>
       </main>
 
+
       {/* Settings Modal */}
       <SettingsModal isOpen={showSettings} onClose={() => setShowSettings(false)} />
+
+      {/* Onboarding Journey */}
+      {showOnboarding && (
+        <OnboardingJourney
+          onComplete={handleOnboardingComplete}
+          onSkip={() => setShowOnboarding(false)}
+        />
+      )}
     </div>
   );
 }
