@@ -2,6 +2,7 @@ import { HashRouter, Routes, Route, Link, useLocation } from 'react-router-dom';
 import Dashboard from './screens/Dashboard';
 import LogScreen from './screens/LogScreen';
 import ReportsScreen from './screens/ReportsScreen';
+import ScrollToTop from './components/ScrollToTop';
 import { Home, PlusCircle, BarChart3 } from 'lucide-react';
 
 function BottomNav() {
@@ -39,6 +40,7 @@ function BottomNav() {
 function App() {
   return (
     <HashRouter>
+      <ScrollToTop />
       <div className="min-h-screen pb-16">
         <Routes>
           <Route path="/" element={<Dashboard />} />
