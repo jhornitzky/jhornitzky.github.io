@@ -166,7 +166,7 @@ function Dashboard() {
 
                 {/* Date and Details on Right - More priority space */}
                 <div className="flex flex-col justify-center min-w-0 flex-1">
-                  <h3 className={`text-base font-bold leading-tight ${log ? 'text-white' : 'text-gray-900'} truncate`}>
+                  <h3 className={`text-base font-bold leading-tight ${log ? 'text-white' : 'text-gray-900'}`}>
                     {isToday ? 'Today' : formatDisplayDate(date)}
                   </h3>
                   {isDifferentYear && <span className={`text-[10px] font-bold mt-0.5 ${log ? 'text-white opacity-80' : 'text-gray-700 opacity-60'}`}>{dateYear}</span>}
