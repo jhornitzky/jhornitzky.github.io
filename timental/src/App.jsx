@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
+import { HashRouter, Routes, Route, Link, useLocation } from 'react-router-dom';
 import Dashboard from './screens/Dashboard';
 import LogScreen from './screens/LogScreen';
 import ReportsScreen from './screens/ReportsScreen';
@@ -38,7 +38,7 @@ function BottomNav() {
 
 function App() {
   return (
-    <Router>
+    <HashRouter>
       <div className="min-h-screen pb-16">
         <Routes>
           <Route path="/" element={<Dashboard />} />
@@ -48,7 +48,7 @@ function App() {
         </Routes>
         <BottomNav />
       </div>
-    </Router>
+    </HashRouter>
   );
 }
 
