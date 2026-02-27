@@ -113,25 +113,39 @@ export function isStandalone() {
 
 // Show a notification
 export async function showNotification(title, options = {}) {
-  if (Notification.permission !== 'granted') return;
+  try {
+    if (Notification.permission !== 'granted') return;
 
-  const defaultOptions = {
-    icon: '/timental/pwa-192x192.png',
-    badge: '/timental/pwa-192x192.png',
-    ...options
-  };
+    const defaultOptions = {
+      icon: '/timental/pwa-192x192.png',
+      badge: '/timental/pwa-192x192.png',
+      ...options
+    };
 
-  // Modern way: Use Service Worker registration if available
-  // This is much more reliable on mobile/PWA
-  if ('serviceWorker' in navigator) {
-    const registration = await navigator.serviceWorker.ready;
-    if (registration && registration.showNotification) {
-      return registration.showNotification(title, defaultOptions);
+    // Modern way: Use Service Worker registration if available
+    // This is much more reliable on mobile/PWA
+    if ('serviceWorker' in navigator) {
+      // Add a timeout to prevent hanging if the service worker registration is stuck
+      const swReady = Promise.race([
+        navigator.serviceWorker.ready,
+        new Promise((_, reject) => setTimeout(() => reject(new Error('SW timeout')), 2000))
+      ]);
+
+      try {
+        const registration = await swReady;
+        if (registration && registration.showNotification) {
+          return await registration.showNotification(title, defaultOptions);
+        }
+      } catch (err) {
+        console.warn('Service worker not ready or timeout:', err);
+      }
     }
-  }
 
-  // Fallback for older browsers or if SW is not ready
-  return new Notification(title, defaultOptions);
+    // Fallback for older browsers, if SW is not ready, or if SW registration timed out
+    return new Notification(title, defaultOptions);
+  } catch (error) {
+    console.error('Error showing notification:', error);
+  }
 }
 
 // Check if there's a log for today
