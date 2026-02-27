@@ -3,19 +3,20 @@ import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 
 export default defineConfig({
+  base: '/timental/',
   plugins: [
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg'],
+      includeAssets: [],
       manifest: {
         name: 'Timental - Your Daily Mental Health Tracker',
         short_name: 'Timental',
         description: 'Your private, daily mental health pulse',
-        theme_color: '#ffffff',
+        theme_color: '#126E5E',
         background_color: '#ffffff',
         display: 'standalone',
-        start_url: '/',
+        start_url: '/timental/',
         icons: [
           {
             src: 'pwa-192x192.png',

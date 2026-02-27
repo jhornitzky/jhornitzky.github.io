@@ -53,7 +53,7 @@ function Dashboard() {
         <div className="px-4 py-4 flex items-center justify-between">
           <div className="flex flex-col">
             <img
-              src="https://e778c95a99c8d3087cbc88b6223035f2.cdn.bubble.io/f1695171510006x152597871495189220/timental-logo-trimmed.png"
+              src="logo.png"
               alt="Timental Logo"
               className="h-8 w-auto object-contain"
             />
