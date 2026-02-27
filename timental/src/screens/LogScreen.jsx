@@ -8,13 +8,13 @@ function LogScreen() {
   const navigate = useNavigate();
   const { date: paramDate } = useParams();
   const selectedDate = paramDate || getToday();
-  
+
   const [score, setScore] = useState(null);
   const [criteriaMet, setCriteriaMet] = useState([]);
   const [notes, setNotes] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
-  
+
   // Load existing entry if available
   useEffect(() => {
     async function loadEntry() {
@@ -29,11 +29,11 @@ function LogScreen() {
     }
     loadEntry();
   }, [selectedDate]);
-  
+
   const handleScoreSelect = (selectedScore) => {
     setScore(selectedScore);
   };
-  
+
   const handleCriteriaToggle = (criteriaId) => {
     setCriteriaMet(prev => {
       if (prev.includes(criteriaId)) {
@@ -43,13 +43,13 @@ function LogScreen() {
       }
     });
   };
-  
+
   const handleSave = async () => {
     if (score === null) {
       alert('Please select a score before saving');
       return;
     }
-    
+
     setIsSaving(true);
     try {
       await dbHelpers.saveLog(selectedDate, score, criteriaMet, notes);
@@ -61,7 +61,7 @@ function LogScreen() {
       setIsSaving(false);
     }
   };
-  
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -69,11 +69,11 @@ function LogScreen() {
       </div>
     );
   }
-  
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-10">
+      <header className="bg-white border-b border-gray-200 sticky top-0 z-30">
         <div className="px-4 py-4 flex items-center gap-3">
           <button
             onClick={() => navigate('/')}
@@ -82,49 +82,41 @@ function LogScreen() {
             <ChevronLeft size={24} />
           </button>
           <div>
-            <h1 className="text-xl font-bold text-gray-900">Daily Entry</h1>
+            <h1 className="text-xl font-bold text-gray-900">Daily Check In</h1>
             <p className="text-sm text-gray-600">{formatDisplayDate(selectedDate)}</p>
           </div>
         </div>
       </header>
-      
+
       {/* Main Content */}
       <main className="px-4 py-6 pb-24">
         {/* Score Selection */}
         <section className="mb-8">
           <h2 className="text-lg font-semibold text-gray-900 mb-3">
-            How was your mental health today?
+            How was your day out of 10?
           </h2>
-          <p className="text-sm text-gray-600 mb-4">Rate from 1 (worst) to 10 (best)</p>
-          
-          <div className="grid grid-cols-5 gap-2">
-            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => (
-              <button
-                key={num}
-                onClick={() => handleScoreSelect(num)}
-                className={`score-button ${
-                  score === num ? 'selected' : ''
-                } ${
-                  num <= 3 ? 'bg-red-100 hover:bg-red-200 text-red-700' :
-                  num <= 6 ? 'bg-yellow-100 hover:bg-yellow-200 text-yellow-700' :
-                  'bg-green-100 hover:bg-green-200 text-green-700'
+
+          <div className="w-full">
+            <select
+              value={score === null ? '' : score}
+              onChange={(e) => handleScoreSelect(e.target.value === '' ? null : parseInt(e.target.value))}
+              className={`w-36 p-4 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-[#0284c7] focus:border-[#0284c7] font-bold text-lg transition-colors duration-300 ${score === null ? 'bg-white' : score < 5 ? 'bg-yellow-200' : 'bg-green-200'
                 }`}
-              >
-                {num}
-              </button>
-            ))}
+            >
+              <option value="" disabled>Select...</option>
+              {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(num => (
+                <option key={num} value={num} className="bg-white text-gray-900">{num}</option>
+              ))}
+            </select>
           </div>
         </section>
-        
+
         {/* Criteria Checklist */}
         <section className="mb-8">
           <h2 className="text-lg font-semibold text-gray-900 mb-3">
-            Daily Health Criteria
+            What did you do?
           </h2>
-          <p className="text-sm text-gray-600 mb-4">
-            Check all that apply to today ({criteriaMet.length}/11)
-          </p>
-          
+
           <div className="space-y-2">
             {CRITERIA.map((criteria) => (
               <label
@@ -141,16 +133,13 @@ function LogScreen() {
             ))}
           </div>
         </section>
-        
+
         {/* Notes */}
         <section className="mb-8">
           <h2 className="text-lg font-semibold text-gray-900 mb-3">
-            Reflection (Optional)
-          </h2>
-          <p className="text-sm text-gray-600 mb-4">
             Any thoughts or notes about today?
-          </p>
-          
+          </h2>
+
           <textarea
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
@@ -159,7 +148,7 @@ function LogScreen() {
           />
         </section>
       </main>
-      
+
       {/* Sticky Save Button */}
       <div className="fixed bottom-16 left-0 right-0 p-4 bg-white border-t border-gray-200">
         <button

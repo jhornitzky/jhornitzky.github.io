@@ -2,24 +2,24 @@ import Dexie from 'dexie';
 
 // Define the 11 mental health criteria
 export const CRITERIA = [
-  { id: 'work', label: 'Enjoyed work, or not work?' },
-  { id: 'financial', label: 'Feel financially ok?' },
-  { id: 'community', label: 'Did something with a community?' },
-  { id: 'exercise', label: 'Exercised?' },
-  { id: 'healthy_food', label: 'Ate healthy food?' },
-  { id: 'sleep', label: 'Slept well?' },
-  { id: 'social', label: 'Fun with family or friends?' },
-  { id: 'respect', label: 'I was treated with respect.' },
-  { id: 'joy', label: 'I smiled and laughed a lot.' },
-  { id: 'rested', label: 'I felt well-rested.' },
-  { id: 'learning', label: 'I learned something new.' }
+  { id: 'work', label: 'I enjoyed work' },
+  { id: 'financial', label: 'I felt financially ok' },
+  { id: 'community', label: 'I did something with a community' },
+  { id: 'exercise', label: 'I exercised' },
+  { id: 'healthy_food', label: 'I ate healthy food' },
+  { id: 'sleep', label: 'I slept well last night' },
+  { id: 'social', label: 'I had fun with family or friends' },
+  { id: 'respect', label: 'I was treated with respect' },
+  { id: 'joy', label: 'I smiled and laughed a lot' },
+  { id: 'rested', label: 'I felt well-rested' },
+  { id: 'learning', label: 'I learned something new' }
 ];
 
 // Initialize Dexie database
 class TimentalDB extends Dexie {
   constructor() {
     super('TimentalDB');
-    
+
     this.version(1).stores({
       logs: 'date, score, criteriaMet, notes',
       settings: 'key, value'
@@ -59,13 +59,16 @@ export const dbHelpers = {
       .toArray();
   },
 
-  // Get last N days of logs
-  async getLastNDaysLogs(days) {
-    const endDate = new Date().toISOString().split('T')[0];
-    const startDate = new Date();
-    startDate.setDate(startDate.getDate() - days);
+  // Get N days of logs with optional offset
+  async getLastNDaysLogs(days, offsetDays = 0) {
+    const endDateObj = new Date();
+    endDateObj.setDate(endDateObj.getDate() - offsetDays);
+    const endDate = endDateObj.toISOString().split('T')[0];
+
+    const startDate = new Date(endDateObj);
+    startDate.setDate(startDate.getDate() - (days - 1));
     const startDateStr = startDate.toISOString().split('T')[0];
-    
+
     return await this.getLogsInRange(startDateStr, endDate);
   },
 
@@ -73,7 +76,7 @@ export const dbHelpers = {
   async exportData() {
     const logs = await db.logs.toArray();
     const settings = await db.settings.toArray();
-    
+
     return {
       version: 1,
       exportDate: new Date().toISOString(),

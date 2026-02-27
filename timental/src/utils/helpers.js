@@ -16,45 +16,34 @@ export function parseDate(dateStr) {
 // Format date for display (e.g., "Tuesday, Oct 24")
 export function formatDisplayDate(dateStr) {
   const date = parseDate(dateStr);
-  return date.toLocaleDateString('en-US', { 
-    weekday: 'long', 
-    month: 'short', 
-    day: 'numeric' 
+  return date.toLocaleDateString('en-GB', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'short'
   });
 }
 
-// Get date range for last N days
-export function getDateRange(days) {
+// Get date range for N days with optional offset
+export function getDateRange(days, offsetDays = 0) {
   const dates = [];
   const today = new Date();
-  
-  for (let i = days - 1; i >= 0; i--) {
+
+  for (let i = 0; i < days; i++) {
     const date = new Date(today);
-    date.setDate(date.getDate() - i);
+    date.setDate(date.getDate() - (offsetDays + i));
     dates.push(formatDate(date));
   }
-  
-  return dates;
+
+  return dates.reverse(); // Return in chronological order
 }
 
 // Get color for heatmap based on score
 export function getHeatmapColor(score, hasAllCriteria = false) {
   if (!score) return 'bg-gray-100';
-  
-  const baseColors = [
-    'bg-red-100',      // 1
-    'bg-red-200',      // 2
-    'bg-orange-200',   // 3
-    'bg-orange-300',   // 4
-    'bg-yellow-300',   // 5
-    'bg-yellow-400',   // 6
-    'bg-lime-400',     // 7
-    'bg-green-400',    // 8
-    'bg-green-500',    // 9
-    'bg-green-600'     // 10
-  ];
-  
-  const color = baseColors[score - 1] || 'bg-gray-100';
+
+  // Yellowish for < 5, Greenish for >= 5
+  const color = score < 5 ? 'bg-yellow-200' : 'bg-green-200';
+
   return hasAllCriteria ? color + ' ring-2 ring-blue-400' : color;
 }
 
@@ -100,16 +89,16 @@ export async function requestNotificationPermission() {
   if (!('Notification' in window)) {
     return false;
   }
-  
+
   if (Notification.permission === 'granted') {
     return true;
   }
-  
+
   if (Notification.permission !== 'denied') {
     const permission = await Notification.requestPermission();
     return permission === 'granted';
   }
-  
+
   return false;
 }
 
