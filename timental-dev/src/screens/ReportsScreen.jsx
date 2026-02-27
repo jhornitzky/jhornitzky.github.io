@@ -3,13 +3,22 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { dbHelpers, CRITERIA } from '../db';
 import { downloadJSON, readJSONFile, calculateCriteriaPercentage, formatDate, getHeatmapColor, getDateRange } from '../utils/helpers';
-import { Download, Upload, Trash2, AlertCircle, Check } from 'lucide-react';
+import { Download, Upload, Trash2, AlertCircle, Check, Briefcase, Wallet, Users, Dumbbell, Apple, Moon, Heart, ShieldCheck, Sun, Battery, GraduationCap, Info, Star } from 'lucide-react';
+
+
+const ICON_MAP = {
+  Briefcase, Wallet, Users, Dumbbell, Apple, Moon, Heart, ShieldCheck, Sun, Battery, GraduationCap, Star
+};
+
+
 
 function ReportsScreen() {
   const [isExporting, setIsExporting] = useState(false);
   const [isImporting, setIsImporting] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [activeCriterion, setActiveCriterion] = useState(null);
   const fileInputRef = useRef(null);
+
 
   // Get last 30 days of logs
   const logs = useLiveQuery(
@@ -96,6 +105,28 @@ function ReportsScreen() {
 
       {/* Main Content */}
       <main className="px-4 py-6 pb-24">
+        {activeCriterion && (
+          <div className="fixed top-20 left-4 right-4 z-50 animate-in fade-in slide-in-from-top-4 duration-300">
+            <div className="bg-[#126E5E] text-white px-4 py-3 rounded-xl shadow-lg flex items-center justify-between transition-all border border-white/20">
+              <div className="flex items-center gap-3">
+                <div className="bg-white/20 p-2 rounded-lg">
+                  {(() => {
+                    const Icon = ICON_MAP[activeCriterion.icon];
+                    return Icon ? <Icon size={20} /> : <Info size={20} />;
+                  })()}
+                </div>
+                <span className="font-bold">{activeCriterion.label}</span>
+              </div>
+              <button
+                onClick={() => setActiveCriterion(null)}
+                className="p-1 hover:bg-white/10 rounded-full transition-colors"
+              >
+                <Check size={20} />
+              </button>
+            </div>
+          </div>
+        )}
+
         {logs && logs.length > 0 ? (
           <>
 
@@ -138,14 +169,17 @@ function ReportsScreen() {
             <section className="bg-white rounded-lg p-4 shadow-sm mb-6 overflow-hidden">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">What you did each day</h3>
 
-              <div className="overflow-x-auto -mx-4 px-4 pb-2">
+              <div className="overflow-x-auto pb-2">
+
                 <div className="min-w-[800px]">
                   <table className="w-full border-collapse">
                     <thead>
                       <tr>
-                        <th className="sticky left-0 z-20 bg-white text-left text-xs font-bold text-gray-400 uppercase tracking-wider py-2 pr-4 border-b border-gray-100 min-w-[120px] shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]">
-                          Habit / Date
+                        <th className="sticky left-0 z-20 bg-white text-left text-xs font-bold text-gray-400 uppercase tracking-wider py-2 pr-4 border-b border-gray-100 min-w-[60px] sm:min-w-[120px] shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]">
+                          <span className="hidden sm:inline">Habit / Date</span>
+                          <span className="sm:hidden text-[10px]">Habit / Date</span>
                         </th>
+
                         {gridDates.map(date => (
                           <th key={date} className="text-center text-[10px] font-bold text-gray-500 py-2 px-1 border-b border-gray-100 min-w-[40px]">
                             {(() => {
@@ -158,10 +192,24 @@ function ReportsScreen() {
                     </thead>
                     <tbody>
                       {/* Score Row */}
-                      <tr className="bg-gray-50/50">
-                        <td className="sticky left-0 z-10 bg-gray-50 text-xs font-bold text-gray-700 py-3 pr-4 border-b border-gray-100 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]">
-                          Daily Score
+                      <tr className="bg-gray-100/80">
+
+                        <td
+                          onClick={() => setActiveCriterion({ id: 'score', label: 'Daily Score', icon: 'Star' })}
+                          className="sticky left-0 z-10 bg-gray-100 text-xs font-bold text-gray-700 py-3 pr-2 sm:pr-4 border-b border-gray-100 shadow-[4px_0_8px_-4px_rgba(0,0,0,0.15)] cursor-pointer active:bg-gray-200 transition-colors"
+                        >
+
+                          <div className="flex items-center gap-2">
+
+                            <div className="text-[#fab515] shrink-0">
+                              <Star size={18} fill="#fab515" />
+                            </div>
+                            <span className="hidden sm:inline">Daily Score</span>
+                          </div>
+
                         </td>
+
+
                         {gridDates.map(date => {
                           const log = logsMap[date];
                           const hasAllCriteria = log?.criteriaMet?.length === 11;
@@ -179,9 +227,21 @@ function ReportsScreen() {
                       {/* Criteria Rows */}
                       {CRITERIA.map((criteria, idx) => (
                         <tr key={criteria.id} className={idx % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                          <td className={`sticky left-0 z-10 text-xs font-semibold text-gray-600 py-2.5 pr-4 border-b border-gray-50 whitespace-nowrap overflow-hidden text-ellipsis shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)] ${idx % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`}>
-                            {criteria.label}
+                          <td
+                            onClick={() => setActiveCriterion(criteria)}
+                            className={`sticky left-0 z-10 text-xs font-semibold py-2.5 pr-2 sm:pr-4 border-b border-gray-50 whitespace-nowrap overflow-hidden text-ellipsis shadow-[4px_0_8px_-4px_rgba(0,0,0,0.15)] cursor-pointer active:bg-gray-100 transition-colors ${idx % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`}
+                          >
+                            <div className="flex items-center gap-2">
+                              <div className="text-gray-400 sm:text-gray-600 shrink-0">
+                                {(() => {
+                                  const Icon = ICON_MAP[criteria.icon];
+                                  return Icon ? <Icon size={18} /> : null;
+                                })()}
+                              </div>
+                              <span className="hidden sm:inline text-gray-600 truncate">{criteria.label}</span>
+                            </div>
                           </td>
+
                           {gridDates.map(date => {
                             const log = logsMap[date];
                             const isMet = log?.criteriaMet?.includes(criteria.id);

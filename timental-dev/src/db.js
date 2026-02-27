@@ -2,17 +2,17 @@ import Dexie from 'dexie';
 
 // Define the 11 mental health criteria
 export const CRITERIA = [
-  { id: 'work', label: 'I enjoyed work' },
-  { id: 'financial', label: 'I felt financially ok' },
-  { id: 'community', label: 'I did something with a community' },
-  { id: 'exercise', label: 'I exercised' },
-  { id: 'healthy_food', label: 'I ate healthy food' },
-  { id: 'sleep', label: 'I slept well last night' },
-  { id: 'social', label: 'I had fun with family or friends' },
-  { id: 'respect', label: 'I was treated with respect' },
-  { id: 'joy', label: 'I smiled and laughed a lot' },
-  { id: 'rested', label: 'I felt well-rested' },
-  { id: 'learning', label: 'I learned something new' }
+  { id: 'work', label: 'I enjoyed work', icon: 'Briefcase' },
+  { id: 'financial', label: 'I felt financially ok', icon: 'Wallet' },
+  { id: 'community', label: 'I did something with a community', icon: 'Users' },
+  { id: 'exercise', label: 'I exercised', icon: 'Dumbbell' },
+  { id: 'healthy_food', label: 'I ate healthy food', icon: 'Apple' },
+  { id: 'sleep', label: 'I slept well last night', icon: 'Moon' },
+  { id: 'social', label: 'I had fun with family or friends', icon: 'Heart' },
+  { id: 'respect', label: 'I was treated with respect', icon: 'ShieldCheck' },
+  { id: 'joy', label: 'I smiled and laughed a lot', icon: 'Sun' },
+  { id: 'rested', label: 'I felt well-rested', icon: 'Battery' },
+  { id: 'learning', label: 'I learned something new', icon: 'GraduationCap' }
 ];
 
 // Initialize Dexie database
