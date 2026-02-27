@@ -52,7 +52,11 @@ function Dashboard() {
       <header className="bg-white border-b border-gray-200 sticky top-0 z-30">
         <div className="px-4 py-4 flex items-center justify-between">
           <div className="flex flex-col">
-            <h1 className="text-2xl font-bold text-gray-900">Timental</h1>
+            <img
+              src="https://e778c95a99c8d3087cbc88b6223035f2.cdn.bubble.io/f1695171510006x152597871495189220/timental-logo-trimmed.png"
+              alt="Timental Logo"
+              className="h-8 w-auto object-contain"
+            />
           </div>
           <button
             onClick={() => setShowSettings(true)}
@@ -82,29 +86,29 @@ function Dashboard() {
                 key={date}
                 ref={isToday ? todayRef : null}
                 onClick={() => handleDayClick(date)}
-                className={`${colorClass} rounded-2xl p-4 shadow-sm flex items-center gap-4 cursor-pointer relative hover:shadow-md transition-all h-28 ${isToday ? 'ring-2 ring-blue-600 ring-offset-2' : ''
+                className={`${colorClass} rounded-2xl p-4 shadow-sm flex items-center gap-4 cursor-pointer relative hover:shadow-md transition-all h-28 ${isToday ? 'ring-2 ring-white ring-offset-2' : ''
                   }`}
               >
                 {/* Large Score on Left */}
                 <div className="flex flex-col items-center justify-center shrink-0 min-w-[4rem]">
-                  <span className="text-5xl font-black text-gray-900 leading-none">
+                  <span className={`text-5xl font-black leading-none ${log ? 'text-white' : 'text-gray-900'}`}>
                     {log?.score ? log.score : '-'}
                   </span>
                   {hasAllCriteria && (
-                    <div className="mt-2 w-3 h-3 bg-blue-600 rounded-full border-2 border-white shadow-sm"></div>
+                    <div className="mt-2 w-3 h-3 bg-white rounded-full border-2 border-white shadow-sm"></div>
                   )}
                 </div>
 
                 {/* Date and Details on Right */}
                 <div className="flex flex-col justify-center min-w-0">
-                  <h3 className="text-lg font-bold text-gray-900 leading-tight">
+                  <h3 className={`text-lg font-bold leading-tight ${log ? 'text-white' : 'text-gray-900'}`}>
                     {isToday ? 'Today' : formatDisplayDate(date)}
                   </h3>
-                  {isDifferentYear && <span className="text-xs font-bold text-gray-700 opacity-60 mt-0.5">{dateYear}</span>}
+                  {isDifferentYear && <span className={`text-xs font-bold mt-0.5 ${log ? 'text-white opacity-80' : 'text-gray-700 opacity-60'}`}>{dateYear}</span>}
 
                   <div className="mt-2">
                     {log ? (
-                      <div className="text-xs font-bold text-gray-800 opacity-70">
+                      <div className="text-xs font-bold text-white opacity-90">
                         {percentage}%
                       </div>
                     ) : (

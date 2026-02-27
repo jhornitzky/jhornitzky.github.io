@@ -42,9 +42,9 @@ export function getHeatmapColor(score, hasAllCriteria = false) {
   if (!score) return 'bg-gray-100';
 
   // Yellowish for < 5, Greenish for >= 5
-  const color = score < 5 ? 'bg-yellow-200' : 'bg-green-200';
+  const color = score < 5 ? 'bg-mood-bad' : 'bg-mood-good';
 
-  return hasAllCriteria ? color + ' ring-2 ring-blue-400' : color;
+  return hasAllCriteria ? color + ' ring-2 ring-white' : color;
 }
 
 // Download data as JSON file

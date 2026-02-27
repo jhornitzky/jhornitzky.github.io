@@ -71,7 +71,7 @@ function ReportsScreen() {
   // Prepare chart data for line chart
   const chartData = logs ? logs.map(log => ({
     date: new Date(log.date + 'T00:00:00').toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }),
-    score: log.score,
+    Score: log.score,
   })).reverse() : [];
 
   // Prepare grid data (all last 30 days, most recent first)
@@ -123,10 +123,10 @@ function ReportsScreen() {
                     />
                     <Line
                       type="monotone"
-                      dataKey="score"
-                      stroke="#0ea5e9"
+                      dataKey="Score"
+                      stroke="#126E5E"
                       strokeWidth={2}
-                      dot={{ fill: '#0ea5e9', r: 4 }}
+                      dot={{ fill: '#126E5E', r: 4 }}
                       activeDot={{ r: 6 }}
                     />
                   </LineChart>
@@ -168,7 +168,7 @@ function ReportsScreen() {
                           const color = log ? getHeatmapColor(log.score, hasAllCriteria) : 'bg-gray-100/50';
                           return (
                             <td key={date} className="py-2 px-1 border-b border-gray-100">
-                              <div className={`w-8 h-8 mx-auto rounded-lg flex items-center justify-center text-xs font-black text-gray-800 ${color}`}>
+                              <div className={`w-8 h-8 mx-auto rounded-lg flex items-center justify-center text-xs font-black ${log ? 'text-white' : 'text-gray-400'} ${color}`}>
                                 {log?.score || '-'}
                               </div>
                             </td>
@@ -187,7 +187,7 @@ function ReportsScreen() {
                             const isMet = log?.criteriaMet?.includes(criteria.id);
                             return (
                               <td key={date} className="py-2 px-1 border-b border-gray-50">
-                                <div className={`w-6 h-6 mx-auto rounded-md flex items-center justify-center transition-colors ${isMet ? 'bg-green-100 text-green-600' : 'bg-gray-100 text-transparent'}`}>
+                                <div className={`w-6 h-6 mx-auto rounded-md flex items-center justify-center transition-colors ${isMet ? 'bg-mood-good text-white' : 'bg-gray-100 text-transparent'}`}>
                                   <Check size={14} strokeWidth={4} />
                                 </div>
                               </td>

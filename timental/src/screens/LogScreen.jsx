@@ -100,7 +100,7 @@ function LogScreen() {
             <select
               value={score === null ? '' : score}
               onChange={(e) => handleScoreSelect(e.target.value === '' ? null : parseInt(e.target.value))}
-              className={`w-36 p-4 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-[#0284c7] focus:border-[#0284c7] font-bold text-lg transition-colors duration-300 ${score === null ? 'bg-white' : score < 5 ? 'bg-yellow-200' : 'bg-green-200'
+              className={`w-36 p-4 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-mood-good focus:border-mood-good font-bold text-lg transition-colors duration-300 ${score === null ? 'bg-white' : score < 5 ? 'bg-mood-bad text-white' : 'bg-mood-good text-white'
                 }`}
             >
               <option value="" disabled>Select...</option>
@@ -143,7 +143,7 @@ function LogScreen() {
           <textarea
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
-            className="w-full min-h-[120px] px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent resize-none"
+            className="w-full min-h-[120px] px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-mood-good focus:border-transparent resize-none"
             placeholder="Write your thoughts here..."
           />
         </section>
