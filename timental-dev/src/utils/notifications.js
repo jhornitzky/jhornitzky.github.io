@@ -5,20 +5,20 @@ import { getToday, showNotification, requestNotificationPermission } from './hel
 export async function checkAndShowReminder() {
   const reminderEnabled = await dbHelpers.getSetting('reminderEnabled', false);
   if (!reminderEnabled) return;
-  
+
   const reminderTime = await dbHelpers.getSetting('reminderTime', '20:00');
   const today = getToday();
-  
+
   // Check if there's already a log for today
   const todayLog = await dbHelpers.getLog(today);
   if (todayLog) return; // Already logged today
-  
+
   // Check if it's time for the reminder
   const now = new Date();
   const [hours, minutes] = reminderTime.split(':').map(Number);
   const reminderDate = new Date();
   reminderDate.setHours(hours, minutes, 0, 0);
-  
+
   // If current time is past the reminder time and we haven't logged yet
   if (now >= reminderDate) {
     showNotification('Timental Reminder', {
@@ -33,7 +33,7 @@ export async function checkAndShowReminder() {
 export function scheduleDailyReminderCheck() {
   // Check every hour if we should show a reminder
   setInterval(checkAndShowReminder, 60 * 60 * 1000); // Check every hour
-  
+
   // Also check on app load
   checkAndShowReminder();
 }
@@ -44,12 +44,12 @@ export async function enableNotifications(reminderTime = '20:00') {
   if (!hasPermission) {
     return { success: false, error: 'Permission denied' };
   }
-  
+
   await dbHelpers.setSetting('reminderEnabled', true);
   await dbHelpers.setSetting('reminderTime', reminderTime);
-  
+
   scheduleDailyReminderCheck();
-  
+
   return { success: true };
 }
 
@@ -63,6 +63,21 @@ export async function disableNotifications() {
 export async function getNotificationSettings() {
   const enabled = await dbHelpers.getSetting('reminderEnabled', false);
   const time = await dbHelpers.getSetting('reminderTime', '20:00');
-  
+
   return { enabled, time };
+}
+
+// Send a test notification immediately
+export async function sendTestNotification() {
+  const hasPermission = await requestNotificationPermission();
+  if (!hasPermission) {
+    return { success: false, error: 'Permission denied' };
+  }
+
+  await showNotification('Timental Test', {
+    body: 'This is a test notification from Timental!',
+    tag: 'test-notification'
+  });
+
+  return { success: true };
 }

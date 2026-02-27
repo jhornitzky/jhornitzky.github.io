@@ -46,6 +46,36 @@ function Dashboard() {
   const today = getToday();
   const currentYear = new Date().getFullYear();
 
+  // Handle scroll restoration for dashboard
+  useEffect(() => {
+    const savedScrollPos = sessionStorage.getItem('dashboardScrollPos');
+    const prevPath = sessionStorage.getItem('prevPath');
+
+    // Only restore scroll if returning from a log entry
+    const isFromLog = prevPath && prevPath.startsWith('/log');
+
+    if (isFromLog && savedScrollPos) {
+      // Use a small timeout to ensure the DOM has rendered enough height
+      const timer = setTimeout(() => {
+        window.scrollTo(0, parseInt(savedScrollPos, 10));
+      }, 100);
+      return () => clearTimeout(timer);
+    } else {
+      // If coming from reports or elsewhere, always go to top
+      window.scrollTo(0, 0);
+    }
+
+    const handleScroll = () => {
+      // Only save if we're actually on the dashboard path
+      if (window.location.hash === '#/') {
+        sessionStorage.setItem('dashboardScrollPos', window.scrollY.toString());
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}

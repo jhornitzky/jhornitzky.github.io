@@ -102,15 +102,36 @@ export async function requestNotificationPermission() {
   return false;
 }
 
+// Check if the app is running in standalone mode (installed)
+export function isStandalone() {
+  return (
+    window.matchMedia('(display-mode: standalone)').matches ||
+    window.navigator.standalone ||
+    document.referrer.includes('android-app://')
+  );
+}
+
 // Show a notification
-export function showNotification(title, options = {}) {
-  if (Notification.permission === 'granted') {
-    return new Notification(title, {
-      icon: '/pwa-192x192.png',
-      badge: '/pwa-192x192.png',
-      ...options
-    });
+export async function showNotification(title, options = {}) {
+  if (Notification.permission !== 'granted') return;
+
+  const defaultOptions = {
+    icon: '/timental/pwa-192x192.png',
+    badge: '/timental/pwa-192x192.png',
+    ...options
+  };
+
+  // Modern way: Use Service Worker registration if available
+  // This is much more reliable on mobile/PWA
+  if ('serviceWorker' in navigator) {
+    const registration = await navigator.serviceWorker.ready;
+    if (registration && registration.showNotification) {
+      return registration.showNotification(title, defaultOptions);
+    }
   }
+
+  // Fallback for older browsers or if SW is not ready
+  return new Notification(title, defaultOptions);
 }
 
 // Check if there's a log for today
