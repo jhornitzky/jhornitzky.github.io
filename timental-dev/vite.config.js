@@ -4,6 +4,10 @@ import { VitePWA } from 'vite-plugin-pwa'
 
 export default defineConfig({
   base: '/timental/',
+  build: {
+    outDir: '../timental',
+    emptyOutDir: true
+  },
   plugins: [
     react(),
     VitePWA({
