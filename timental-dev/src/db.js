@@ -61,13 +61,20 @@ export const dbHelpers = {
 
   // Get N days of logs with optional offset
   async getLastNDaysLogs(days, offsetDays = 0) {
+    const toLocalDateStr = (d) => {
+      const year = d.getFullYear();
+      const month = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    };
+
     const endDateObj = new Date();
     endDateObj.setDate(endDateObj.getDate() - offsetDays);
-    const endDate = endDateObj.toISOString().split('T')[0];
+    const endDate = toLocalDateStr(endDateObj);
 
     const startDate = new Date(endDateObj);
     startDate.setDate(startDate.getDate() - (days - 1));
-    const startDateStr = startDate.toISOString().split('T')[0];
+    const startDateStr = toLocalDateStr(startDate);
 
     return await this.getLogsInRange(startDateStr, endDate);
   },
