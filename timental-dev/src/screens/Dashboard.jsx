@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { db, dbHelpers } from '../db';
 import { getDateRange, getHeatmapColor, getToday, formatDisplayDate, calculateCriteriaPercentage } from '../utils/helpers';
-import { scheduleDailyReminderCheck } from '../utils/notifications';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { Settings, HelpCircle } from 'lucide-react';
 import SettingsModal from '../components/SettingsModal';
@@ -58,11 +57,6 @@ function Dashboard() {
 
   // Handle loading more
   const loadMore = () => setVisibleDays(prev => prev + DAYS_INCREMENT);
-
-  // Initialize notification checking
-  useEffect(() => {
-    scheduleDailyReminderCheck();
-  }, []);
 
   const handleDayClick = (date) => {
     // Save scroll position immediately when navigating to a log

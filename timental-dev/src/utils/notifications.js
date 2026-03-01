@@ -1,132 +1,57 @@
 import { dbHelpers } from '../db';
-import { getToday, showNotification, requestNotificationPermission } from './helpers';
 
-// Module-level guard — prevents duplicate intervals if Dashboard remounts
-let reminderIntervalId = null;
+const DEFAULT_TIME = '20:00';
 
-// Check if we should show a reminder (runs while the app is open)
-export async function checkAndShowReminder() {
-  const reminderEnabled = await dbHelpers.getSetting('reminderEnabled', false);
-  if (!reminderEnabled) return;
+// Persist the chosen time so the UI remembers it across sessions
+export async function getCalendarSettings() {
+  const time = await dbHelpers.getSetting('calendarReminderTime', DEFAULT_TIME);
+  return { time };
+}
 
-  const reminderTime = await dbHelpers.getSetting('reminderTime', '20:00');
-  const today = getToday();
+export async function saveCalendarTime(time) {
+  await dbHelpers.setSetting('calendarReminderTime', time);
+}
 
-  // Skip if the user has already logged today
-  const todayLog = await dbHelpers.getLog(today);
-  if (todayLog) return;
+// Generate and trigger download of a recurring daily .ics reminder
+export function downloadCalendarReminder(time = DEFAULT_TIME) {
+  const [hours, minutes] = time.split(':').map(Number);
 
-  // Skip if we already sent the reminder today (also checked in the SW)
-  const lastReminderDate = await dbHelpers.getSetting('lastReminderDate', null);
-  if (lastReminderDate === today) return;
-
-  // Only notify after the configured reminder time
+  // Start from today using local (floating) time — no TZID needed
   const now = new Date();
-  const [hours, minutes] = reminderTime.split(':').map(Number);
-  const reminderDate = new Date();
-  reminderDate.setHours(hours, minutes, 0, 0);
-  if (now < reminderDate) return;
+  const pad = (n) => String(n).padStart(2, '0');
+  const dateStr =
+    now.getFullYear() +
+    pad(now.getMonth() + 1) +
+    pad(now.getDate());
+  const timeStr = pad(hours) + pad(minutes) + '00';
 
-  await showNotification('Timental Reminder', {
-    body: "Don't forget to log your mental health for today!",
-    tag: 'daily-reminder',
-    requireInteraction: false
-  });
+  const uid = `timental-reminder-${Date.now()}@timental`;
 
-  // Record that we notified today so the SW doesn't fire again
-  await dbHelpers.setSetting('lastReminderDate', today);
-}
+  const ics = [
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//Timental//Timental//EN',
+    'BEGIN:VEVENT',
+    `UID:${uid}`,
+    `DTSTART:${dateStr}T${timeStr}`,
+    `DTEND:${dateStr}T${timeStr}`,
+    'RRULE:FREQ=DAILY',
+    'SUMMARY:Log your Timental entry',
+    'DESCRIPTION:Time to check in on your mental health today.',
+    'BEGIN:VALARM',
+    'TRIGGER:PT0S',
+    'ACTION:DISPLAY',
+    'DESCRIPTION:Log your Timental entry',
+    'END:VALARM',
+    'END:VEVENT',
+    'END:VCALENDAR',
+  ].join('\r\n');
 
-// Register Periodic Background Sync so the SW can check reminders
-// even when the app is closed (Android Chrome only; iOS falls back gracefully)
-async function registerPeriodicSync() {
-  if (!('serviceWorker' in navigator)) return;
-  try {
-    const registration = await navigator.serviceWorker.ready;
-    if ('periodicSync' in registration) {
-      await registration.periodicSync.register('daily-reminder', {
-        minInterval: 60 * 60 * 1000 // browser may enforce a longer minimum
-      });
-    }
-  } catch (err) {
-    // periodicSync may be unavailable (iOS, desktop browsers without the flag)
-    console.warn('Periodic Background Sync not available:', err);
-  }
-}
-
-async function unregisterPeriodicSync() {
-  if (!('serviceWorker' in navigator)) return;
-  try {
-    const registration = await navigator.serviceWorker.ready;
-    if ('periodicSync' in registration) {
-      await registration.periodicSync.unregister('daily-reminder');
-    }
-  } catch (err) {
-    console.warn('Could not unregister Periodic Sync:', err);
-  }
-}
-
-// Schedule daily reminder check while the app is open
-export function scheduleDailyReminderCheck() {
-  // Guard against duplicate intervals caused by component remounts
-  if (reminderIntervalId !== null) return;
-
-  // Check every 15 minutes while the app is open (fallback for when SW sync isn't available)
-  reminderIntervalId = setInterval(checkAndShowReminder, 15 * 60 * 1000);
-
-  // Also check immediately on app load
-  checkAndShowReminder();
-}
-
-// Enable notifications
-export async function enableNotifications(reminderTime = '20:00') {
-  const hasPermission = await requestNotificationPermission();
-  if (!hasPermission) {
-    return { success: false, error: 'Permission denied' };
-  }
-
-  await dbHelpers.setSetting('reminderEnabled', true);
-  await dbHelpers.setSetting('reminderTime', reminderTime);
-
-  await registerPeriodicSync();
-  scheduleDailyReminderCheck();
-
-  return { success: true };
-}
-
-// Disable notifications
-export async function disableNotifications() {
-  await dbHelpers.setSetting('reminderEnabled', false);
-  await unregisterPeriodicSync();
-
-  // Clear the in-app interval
-  if (reminderIntervalId !== null) {
-    clearInterval(reminderIntervalId);
-    reminderIntervalId = null;
-  }
-
-  return { success: true };
-}
-
-// Get notification settings
-export async function getNotificationSettings() {
-  const enabled = await dbHelpers.getSetting('reminderEnabled', false);
-  const time = await dbHelpers.getSetting('reminderTime', '20:00');
-
-  return { enabled, time };
-}
-
-// Send a test notification immediately
-export async function sendTestNotification() {
-  const hasPermission = await requestNotificationPermission();
-  if (!hasPermission) {
-    return { success: false, error: 'Permission denied' };
-  }
-
-  await showNotification('Timental Test', {
-    body: 'This is a test notification from Timental!',
-    tag: 'test-notification'
-  });
-
-  return { success: true };
+  const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'timental-reminder.ics';
+  a.click();
+  URL.revokeObjectURL(url);
 }
