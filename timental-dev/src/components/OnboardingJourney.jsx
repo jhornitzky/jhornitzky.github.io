@@ -1,8 +1,18 @@
 import { useState } from 'react';
-import { X, ChevronRight, ChevronLeft, CheckCircle2, Heart, BarChart3, ShieldCheck, PlusCircle } from 'lucide-react';
+import { X, ChevronRight, ChevronLeft, CheckCircle2, Heart, BarChart3, ShieldCheck, PlusCircle, Bell, CalendarPlus } from 'lucide-react';
+import { getCalendarSettings, saveCalendarTime, downloadCalendarReminder, getGoogleCalendarUrl, getOutlookCalendarUrl } from '../utils/notifications';
 
 function OnboardingJourney({ onComplete, onSkip }) {
     const [step, setStep] = useState(0);
+    const [reminderTime, setReminderTime] = useState('20:00');
+    const [isAdding, setIsAdding] = useState(false);
+
+    // Load saved time when component mounts
+    useState(() => {
+        getCalendarSettings().then(({ time }) => setReminderTime(time));
+    });
+
+    const REMINDER_STEP = 2;
 
     const steps = [
         {
@@ -13,9 +23,15 @@ function OnboardingJourney({ onComplete, onSkip }) {
         },
         {
             title: "Check in every day",
-            description: "Each day you can rate your day out of 10 and check in on the factors that drive happiness. Set a daily notification to remind you (for instance at 8pm everyday).",
+            description: "Each day you can rate your day out of 10 and check in on the factors that drive happiness.",
             icon: <PlusCircle size={48} className="text-[#126E5E]" />,
             color: "bg-emerald-50"
+        },
+        {
+            title: "Set a daily reminder",
+            description: "Add a repeating reminder to your calendar so you never forget to log your day.",
+            icon: <Bell size={48} className="text-amber-500" />,
+            color: "bg-amber-50"
         },
         {
             title: "Review your week",
@@ -44,6 +60,17 @@ function OnboardingJourney({ onComplete, onSkip }) {
 
     const prevStep = () => {
         setStep(prev => Math.max(0, prev - 1));
+    };
+
+    const handleTimeChange = (newTime) => {
+        setReminderTime(newTime);
+        saveCalendarTime(newTime);
+    };
+
+    const handleAddToCalendar = () => {
+        setIsAdding(true);
+        downloadCalendarReminder(reminderTime);
+        setTimeout(() => setIsAdding(false), 1500);
     };
 
     return (
@@ -76,9 +103,44 @@ function OnboardingJourney({ onComplete, onSkip }) {
                     <h2 className="text-2xl font-black text-gray-900 mb-3">
                         {currentStep.title}
                     </h2>
-                    <p className="text-gray-600 leading-relaxed text-lg mb-10">
+                    <p className="text-gray-600 leading-relaxed text-lg mb-6">
                         {currentStep.description}
                     </p>
+
+                    {step === REMINDER_STEP && (
+                        <div className="space-y-2 mb-6">
+                            <input
+                                type="time"
+                                value={reminderTime}
+                                onChange={(e) => handleTimeChange(e.target.value)}
+                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#126E5E] focus:border-transparent text-gray-900"
+                            />
+                            <button
+                                onClick={handleAddToCalendar}
+                                disabled={isAdding}
+                                className="w-full flex items-center justify-center gap-2 py-2 px-4 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-sm font-medium transition-colors border border-gray-200 disabled:opacity-50"
+                            >
+                                <CalendarPlus size={16} />
+                                {isAdding ? 'Opening calendar...' : 'Apple / ICS Calendar'}
+                            </button>
+                            <a
+                                href={getGoogleCalendarUrl(reminderTime)}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="w-full flex items-center justify-center gap-2 py-2 px-4 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-sm font-medium transition-colors border border-gray-200"
+                            >
+                                Google Calendar
+                            </a>
+                            <a
+                                href={getOutlookCalendarUrl(reminderTime)}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="w-full flex items-center justify-center gap-2 py-2 px-4 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-sm font-medium transition-colors border border-gray-200"
+                            >
+                                Outlook
+                            </a>
+                        </div>
+                    )}
 
                     <div className="flex gap-3">
                         {step > 0 && (

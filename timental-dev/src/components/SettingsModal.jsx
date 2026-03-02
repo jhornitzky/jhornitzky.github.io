@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { X, Bell, CalendarPlus } from 'lucide-react';
-import { getCalendarSettings, saveCalendarTime, downloadCalendarReminder } from '../utils/notifications';
+import { getCalendarSettings, saveCalendarTime, downloadCalendarReminder, getGoogleCalendarUrl, getOutlookCalendarUrl } from '../utils/notifications';
 
 function SettingsModal({ isOpen, onClose }) {
   const [reminderTime, setReminderTime] = useState('20:00');
@@ -49,7 +49,7 @@ function SettingsModal({ isOpen, onClose }) {
             </div>
 
             <p className="text-xs text-gray-500 mb-4">
-              Add a repeating daily reminder to your calendar app. Works on all devices — no install required.
+              Add a repeating daily reminder to your calendar app.
             </p>
 
             <div className="space-y-4">
@@ -65,14 +65,35 @@ function SettingsModal({ isOpen, onClose }) {
                 />
               </div>
 
-              <button
-                onClick={handleAddToCalendar}
-                disabled={isAdding}
-                className="w-full flex items-center justify-center gap-2 py-2 px-4 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-sm font-medium transition-colors border border-gray-200 disabled:opacity-50"
-              >
-                <CalendarPlus size={16} />
-                {isAdding ? 'Opening calendar...' : 'Add to Calendar'}
-              </button>
+              <div className="space-y-2">
+                <button
+                  onClick={handleAddToCalendar}
+                  disabled={isAdding}
+                  className="w-full flex items-center justify-center gap-2 py-2 px-4 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-sm font-medium transition-colors border border-gray-200 disabled:opacity-50"
+                >
+                  <CalendarPlus size={16} />
+                  {isAdding ? 'Opening calendar...' : 'Apple / ICS Calendar'}
+                </button>
+
+                <div className="flex flex-col gap-2">
+                  <a
+                    href={getGoogleCalendarUrl(reminderTime)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center gap-2 py-2 px-4 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-sm font-medium transition-colors border border-gray-200"
+                  >
+                    Google Calendar
+                  </a>
+                  <a
+                    href={getOutlookCalendarUrl(reminderTime)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center gap-2 py-2 px-4 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-sm font-medium transition-colors border border-gray-200"
+                  >
+                    Outlook
+                  </a>
+                </div>
+              </div>
             </div>
           </section>
 
@@ -80,7 +101,7 @@ function SettingsModal({ isOpen, onClose }) {
           <section>
             <h3 className="text-lg font-semibold text-gray-900 mb-2">About</h3>
             <div className="text-sm text-gray-600 space-y-2">
-              <p><strong>Timental</strong> - Your private, daily mental health pulse</p>
+              <p><strong>Timental</strong> - Your private, daily mental health check in</p>
               <p>Version 1.0.0</p>
               <p className="text-xs">All your data is stored locally in your browser and never sent anywhere.</p>
             </div>
