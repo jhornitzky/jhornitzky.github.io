@@ -2,10 +2,11 @@
 <html>
 
 <head>
-	<title>experiments and ideas</title>
-	<meta name="description" content="Future thinking, ideas and code.">
+	<title>James Hornitzky - Systems Thinker, Tech Builder, Social Impact</title>
+	<meta name="description" content="James Hornitzky builds systems at the intersection of technology and social good. Founder, developer and systems thinker behind Headstart, Reground Impact Reporting, and open source projects.">
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="shortcut icon" href="./i4think_files/favicon.ico" type="image/x-icon">
-	<link rel="stylesheet" href="./i4think_files/i4think.css" type="text/css">
 	<!-- Google Tag Manager -->
 	<script>(function (w, d, s, l, i) {
 			w[l] = w[l] || []; w[l].push({
@@ -16,6 +17,185 @@
 					'https://www.googletagmanager.com/gtm.js?id=' + i + dl; f.parentNode.insertBefore(j, f);
 		})(window, document, 'script', 'dataLayer', 'GTM-WMHLBW7');</script>
 	<!-- End Google Tag Manager -->
+	<style>
+		body {
+			background-position: center center;
+			background-repeat: no-repeat;
+			font-family: 'Helvetica Neue', Arial, sans-serif;
+			color: #292929;
+			line-height: 1.7;
+		}
+
+		a {
+			text-decoration: none;
+		}
+
+		h1, h2, h3 {
+			font-weight: 600;
+		}
+
+		h1 {
+			font-size: 2.8rem;
+			margin-bottom: 0.25rem;
+			margin-top: 3rem;
+		}
+
+		h2 {
+			font-size: 1.8rem;
+			margin-bottom: 0.25rem;
+			margin-top: 2.5rem;
+		}
+
+		h3 {
+			font-size: 1.3rem;
+			margin-bottom: 0.25rem;
+			margin-top: 2rem;
+		}
+
+		.page {
+			width: 740px;
+			margin: 0 auto;
+			max-width: 92%;
+			padding-bottom: 4rem;
+		}
+
+		.byline {
+			color: #757575;
+			font-size: 1rem;
+			margin-top: 0;
+			margin-bottom: 1.2rem;
+		}
+
+		.prose p {
+			font-size: 1.05rem;
+			margin-top: 0;
+			margin-bottom: 1.2rem;
+		}
+
+		.prose ul, .prose ol {
+			padding-left: 1.5rem;
+			margin-bottom: 1.2rem;
+		}
+
+		.prose li {
+			font-size: 1.05rem;
+			margin-bottom: 0.5rem;
+		}
+
+		.prose a {
+			color: #292929;
+			border-bottom: 1px solid #ccc;
+		}
+
+		.prose a:hover {
+			border-bottom-color: #292929;
+		}
+
+		.links-row {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 0.5rem;
+			margin-bottom: 2rem;
+		}
+
+		.links-row a {
+			display: inline-flex;
+			align-items: center;
+			gap: 0.4rem;
+			color: #292929;
+			border: 1px solid #ccc;
+			border-radius: 2rem;
+			padding: 0.3rem 0.9rem;
+			font-size: 0.9rem;
+		}
+
+		.links-row a svg {
+			flex-shrink: 0;
+		}
+
+		.links-row a:hover {
+			border-color: #292929;
+		}
+
+		.section-divider {
+			border: none;
+			border-top: 1px solid #e6e6e6;
+			margin: 2.5rem 0;
+		}
+
+		.new-bits {
+			display: flex;
+			flex-wrap: wrap;
+			margin-top: 1rem;
+		}
+
+		.hover-item {
+			margin: 0 0.5rem 0.5rem 0;
+			text-align: left;
+			width: calc(33.33% - 0.5rem);
+			color: #FFF;
+			background-color: #DDD;
+			padding: 1rem;
+			box-sizing: border-box;
+		}
+
+		@media screen and (max-width: 600px) {
+			.new-bits {
+				display: block;
+			}
+
+			.hover-item {
+				width: 100%;
+				display: block;
+			}
+
+			h1 {
+				font-size: 2rem;
+			}
+
+			h2 {
+				font-size: 1.4rem;
+			}
+		}
+
+		.hover-item a {
+			color: #FFF;
+		}
+
+		.hover-item a:hover {
+			text-shadow: 0 0 20px #FFF;
+		}
+
+		.hover-item .header a {
+			font-size: 1.2rem;
+			text-transform: lowercase;
+		}
+
+		.hover-item .desc {
+			font-size: 0.85rem;
+			margin-top: 0.4rem;
+			opacity: 0.9;
+		}
+
+		.links-section a {
+			color: #555;
+			font-weight: bold;
+			display: block;
+			margin-bottom: 0.5rem;
+		}
+
+		.links-section a:hover {
+			color: rgb(27, 161, 226);
+		}
+
+		.wblue { background-color: rgb(27, 161, 226); }
+		.wdblue { background-color: rgb(7, 141, 206); }
+		.worange { background-color: rgb(240, 150, 9); }
+		.wgreen { background-color: rgb(51, 153, 51); }
+		.wred { background-color: rgb(229, 20, 0); }
+		.wlime { background-color: rgb(140, 191, 38); }
+		.wteal { background-color: rgb(0, 171, 169); }
+	</style>
 </head>
 
 <body>
@@ -26,144 +206,187 @@
 	</noscript>
 	<!-- End Google Tag Manager (noscript) -->
 	<div class="page">
-		<!--<div class="title">
-			<h1>i<span>4</span>think</h1>
-		</div>-->
-		<div class="experiments header">
-			<h1>experiments</h1>
+
+		<h1>James Hornitzky</h1>
+		<p class="byline">Creating systems that change the world for everyone</p>
+
+		<div class="prose">
+			<p>My work is at the intersection of systems and doing good. Ever since I was little I've loved games; Stratego, Talisman, Checkers, Chess, and almost every video game I've played. I've also got an underlying belief in trying to help others and to build a better society. The intersection of these is creating systems that change the world for everyone, so that we can create a better world for following generations.</p>
 		</div>
-		<div class="clearfix"></div>
-		<div class="maincontent">
-			<div class="new-bits">
-				<div class="hover-item wteal">
-					<div className="header">
-						<a href="https://jhornitzky.github.io/timental"
-							data-github="https://github.com/jhornitzky/jhornitzky.github.io/tree/main/timental"
-							target="_blank">timental</a>
-					</div>
-					<div className="desc">
-						Private, daily mental health pulse tracker.
-					</div>
+
+		<div class="links-row">
+			<a href="https://medium.com/@jhornitzky" target="_blank">
+				<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13.54 12a6.8 6.8 0 01-6.77 6.82A6.8 6.8 0 010 12a6.8 6.8 0 016.77-6.82A6.8 6.8 0 0113.54 12zM20.96 12c0 3.54-1.51 6.42-3.38 6.42-1.87 0-3.39-2.88-3.39-6.42s1.52-6.42 3.39-6.42 3.38 2.88 3.38 6.42M24 12c0 3.17-.53 5.75-1.19 5.75-.66 0-1.19-2.58-1.19-5.75s.53-5.75 1.19-5.75C23.47 6.25 24 8.83 24 12z"/></svg>
+				Medium
+			</a>
+			<a href="https://www.linkedin.com/in/james-hornitzky/" target="_blank">
+				<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+				LinkedIn
+			</a>
+			<a href="https://foreveryoneventures.com/" target="_blank">
+				<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+				For Everyone Ventures
+			</a>
+			<a href="https://github.com/jhornitzky" target="_blank">
+				<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+				GitHub
+			</a>
+		</div>
+
+		<hr class="section-divider">
+
+		<h2>Self-Directed Projects</h2>
+
+		<div class="prose">
+			<p>Here's a collection of my own self-directed projects. Most are experiments aimed at an intersection of a new technology and a new use case; an example of small-scale quick innovation. I'm a believer in open source and have benefited greatly from the work of others, so I aim to open source the majority of my projects.</p>
+		</div>
+
+		<div class="new-bits">
+			<div class="hover-item wteal">
+				<div class="header">
+					<a href="https://jhornitzky.github.io/timental"
+						data-github="https://github.com/jhornitzky/jhornitzky.github.io/tree/main/timental"
+						target="_blank">timental</a>
 				</div>
-				<div class="hover-item wgreen">
-					<div class="header">
-						<a href="https://jhornitzky.github.io/loki-text"
-							data-github="https://github.com/jhornitzky/loki-text" target="_blank">loki text</a>
-					</div>
-					<div class="desc">
-						Animated text based on Loki intro.
-					</div>
-				</div>
-				<div class="hover-item worange">
-					<div class="header">
-						<a href="https://jhornitzky.github.io/yolograph/demo/"
-							data-github="https://github.com/jhornitzky/yolograph" target="_blank">yolograph</a>
-					</div>
-					<div class="desc">
-						Visualise your future life plan week by week.
-					</div>
-				</div>
-				<div class="hover-item wblue">
-					<div class="header">
-						<a href="https://jhornitzky.github.io/bloom/" data-github="https://github.com/jhornitzky/bloom"
-							target="_blank">bloom</a>
-					</div>
-					<div class="desc">
-						Simple CSS animation library.
-					</div>
-				</div>
-				<div class="hover-item wteal">
-					<div class="header">
-						<a href="https://jhornitzky.github.io/dnace/"
-							data-github="https://github.com/HealthHackAu2016/DNACE" target="_blank">DNACE</a>
-					</div>
-					<div class="desc">
-						Hackathon game that lets you dance to your DNA. 1st prize HealthHackAu2016.
-					</div>
-				</div>
-				<div class="hover-item wlime">
-					<div class="header">
-						<a href="https://jhornitzky.github.io/hashtagoflife/"
-							data-github="https://github.com/jhornitzky/hashtagoflife" target="_blank">#oflife</a>
-					</div>
-					<div class="desc">
-						Fun take on Conway's Game of Life with the Leafcutter logo.
-					</div>
-				</div>
-				<div class="hover-item wdblue">
-					<div class="header">
-						<a href="https://github.com/jhornitzky/Wrike-PHP" target="_blank">Wrike-PHP</a>
-					</div>
-					<div class="desc">
-						Minor updates to PHP wrapper for Wrike Project Management Software.
-					</div>
-				</div>
-				<div class="hover-item wteal">
-					<div class="header">
-						<a href="http://innoworks.feit.uts.edu.au/" target="_blank">innoWorks</a>
-					</div>
-					<div class="desc">
-						An idea management tool that focuses on sharing and comparing ideas using innovative techniques.
-					</div>
-				</div>
-				<div class="hover-item wdblue">
-					<div class="header">
-						<a href="https://github.com/jhornitzky/mindpad" target="_blank">mindpad</a>
-					</div>
-					<div class="desc">
-						An intelligent notepad that's a self-modifying notepad/console with intelligence.
-					</div>
-				</div>
-				<div class="hover-item wgreen">
-					<div class="header">
-						<a href="https://github.com/jhornitzky/Moody" target="_blank">Moody</a>
-					</div>
-					<div class="desc">iPhone(iOS) experiment on social mood sharing.</div>
-				</div>
-				<div class="hover-item wlime">
-					<div class="header">
-						<a href="https://github.com/jhornitzky/Innovatia-Mobile" target="_blank">Innovatia</a>
-					</div>
-					<div class="desc">Mobile idea recording via iPhone(iOS), that could be synced with a corresponding
-						PHP server.</div>
-				</div>
-				<div class="hover-item wblue">
-					<div class="header">
-						<a href="http://www.youtube.com/watch?v=1qEGozv4MeY" target="_blank">mglove</a>
-					</div>
-					<div class="desc">
-						An experimental glove based control made by repurposing a normal desktop mouse. Was tested by
-						playing Splinter Cell on PC.
-					</div>
-				</div>
-				<div class="hover-item wdblue">
-					<div class="header">
-						<a href="https://github.com/jhornitzky/Gmail-Tap" target="_blank">Gmail Tap</a>
-					</div>
-					<div class="desc">
-						My own version of the infamous Gmail Tap app, which saw 300+ downloads on the Android Market in
-						less than 24 hours, and then
-						was sadly removed.
-					</div>
-				</div>
-				<div class="hover-item wteal">
-					<div class="header">
-						<a href="https://github.com/jhornitzky/eyelive" target="_blank">Eyelive</a>
-					</div>
-					<div class="desc">An experiment in life recording via Android devices. Broke a phone or two testing
-						it, but an interesting idea that could
-						change the way we capture memories.</div>
+				<div class="desc">
+					Private, daily mental health pulse tracker.
 				</div>
 			</div>
-			<div class="old-bits">
-				<div class="experiments header">
-					<h2>links</h2>
+			<div class="hover-item wgreen">
+				<div class="header">
+					<a href="https://jhornitzky.github.io/loki-text"
+						data-github="https://github.com/jhornitzky/loki-text" target="_blank">loki text</a>
 				</div>
-				<div class="hover-item exp">
-					<a href="https://github.com/jhornitzky" target="_blank">github.com/jhornitzky</a>
+				<div class="desc">
+					Animated text based on Loki intro.
 				</div>
 			</div>
+			<div class="hover-item worange">
+				<div class="header">
+					<a href="https://jhornitzky.github.io/yolograph/demo/"
+						data-github="https://github.com/jhornitzky/yolograph" target="_blank">yolograph</a>
+				</div>
+				<div class="desc">
+					Visualise your future life plan week by week.
+				</div>
+			</div>
+			<div class="hover-item wblue">
+				<div class="header">
+					<a href="https://jhornitzky.github.io/bloom/" data-github="https://github.com/jhornitzky/bloom"
+						target="_blank">bloom</a>
+				</div>
+				<div class="desc">
+					Simple CSS animation library.
+				</div>
+			</div>
+			<div class="hover-item wteal">
+				<div class="header">
+					<a href="https://jhornitzky.github.io/dnace/"
+						data-github="https://github.com/HealthHackAu2016/DNACE" target="_blank">DNACE</a>
+				</div>
+				<div class="desc">
+					Hackathon game that lets you dance to your DNA. 1st prize HealthHackAu2016.
+				</div>
+			</div>
+			<div class="hover-item wlime">
+				<div class="header">
+					<a href="https://jhornitzky.github.io/hashtagoflife/"
+						data-github="https://github.com/jhornitzky/hashtagoflife" target="_blank">#oflife</a>
+				</div>
+				<div class="desc">
+					Fun take on Conway's Game of Life with the Leafcutter logo.
+				</div>
+			</div>
+			<div class="hover-item wdblue">
+				<div class="header">
+					<a href="https://github.com/jhornitzky/Wrike-PHP" target="_blank">Wrike-PHP</a>
+				</div>
+				<div class="desc">
+					Minor updates to PHP wrapper for Wrike Project Management Software.
+				</div>
+			</div>
+			<div class="hover-item wteal">
+				<div class="header">
+					<a href="http://innoworks.feit.uts.edu.au/" target="_blank">innoWorks</a>
+				</div>
+				<div class="desc">
+					An idea management tool that focuses on sharing and comparing ideas using innovative techniques.
+				</div>
+			</div>
+			<div class="hover-item wdblue">
+				<div class="header">
+					<a href="https://github.com/jhornitzky/mindpad" target="_blank">mindpad</a>
+				</div>
+				<div class="desc">
+					An intelligent notepad that's a self-modifying notepad/console with intelligence.
+				</div>
+			</div>
+			<div class="hover-item wgreen">
+				<div class="header">
+					<a href="https://github.com/jhornitzky/Moody" target="_blank">Moody</a>
+				</div>
+				<div class="desc">iPhone (iOS) experiment on social mood sharing.</div>
+			</div>
+			<div class="hover-item wlime">
+				<div class="header">
+					<a href="https://github.com/jhornitzky/Innovatia-Mobile" target="_blank">Innovatia</a>
+				</div>
+				<div class="desc">Mobile idea recording via iPhone (iOS), that could be synced with a corresponding PHP server.</div>
+			</div>
+			<div class="hover-item wblue">
+				<div class="header">
+					<a href="http://www.youtube.com/watch?v=1qEGozv4MeY" target="_blank">mglove</a>
+				</div>
+				<div class="desc">
+					An experimental glove based control made by repurposing a normal desktop mouse. Was tested by playing Splinter Cell on PC.
+				</div>
+			</div>
+			<div class="hover-item wdblue">
+				<div class="header">
+					<a href="https://github.com/jhornitzky/Gmail-Tap" target="_blank">Gmail Tap</a>
+				</div>
+				<div class="desc">
+					My own version of the infamous Gmail Tap app, which saw 300+ downloads on the Android Market in less than 24 hours.
+				</div>
+			</div>
+			<div class="hover-item wteal">
+				<div class="header">
+					<a href="https://github.com/jhornitzky/eyelive" target="_blank">Eyelive</a>
+				</div>
+				<div class="desc">An experiment in life recording via Android devices. An interesting idea that could change the way we capture memories.</div>
+			</div>
 		</div>
+
+		<hr class="section-divider">
+
+		<h2>Impactful projects</h2>
+
+		<div class="prose">
+			<p>Taking the approach of the entire problem space as a complex system (i.e. the business model, the users, the technology, and the broader operating environment), I've worked on a few projects that have had significant real world impact:</p>
+
+			<ul>
+				<li><strong>Headstart</strong> &mdash; A platform that helps tens of thousands of people find the free mental health services they need, every month.</li>
+				<li><strong>Reground Impact Reporting</strong> &mdash; Impact tracker and report system built for Reground's circular economy clients. Delivers personalised impact reports to thousands of Reground's customers every month, which they use to track their progress to sustainability goals.</li>
+				<li><strong>G-MEDSS</strong> &mdash; A questionnaire and drug burden index score calculator used in clinical trials examining pharmacists' approach to prescription and patient care. First trialled in Australia, then modified and deployed in Canada.</li>
+				<li><strong>Musica Viva in Schools</strong> &mdash; A custom built learning platform for teachers and school students. Used in thousands of schools across Australia to help primary and secondary students learn music.</li>
+				<li><strong>System 7 and Childcare Centre Desktop</strong> &mdash; Two related platforms used by thousands of childcare centres around Australia. Significantly reduces the strain of administration on childcare centre staff.</li>
+			</ul>
+		</div>
+
+		<hr class="section-divider">
+
+		<h2>Systems Thinking across business and technology</h2>
+
+		<div class="prose">
+			<p>The term system is a broad one. Just like video games, which come with varying goals and modes of gameplay, so too are there many different systems we encounter in life. Businesses in particular are complex systems that have people, processes and technologies with various interactions that lead to unpredictable, dynamic outcomes. This view was largely formed through two experiences:</p>
+
+			<ul>
+				<li>Launching, growing, merging and exiting my own digital agency. Being in business teaches you a lot of lessons through trial and error, particularly if you have not a lot of experience at the start. The entire journey really helped me to see not just the technology as a system, but the way you manage sales, clients, finances, performance reviews etc as overlapping systems. Understanding the key elements of each domain and how they link together or affect other parts is fascinating, very dynamic and quite unpredictable.</li>
+				<li>Building on this idea, I worked with a client on a system that automatically assigns and delegates tasks based on a graph-based representation of the organisation and its priorities. I think this was an ingenious system as it forced business leaders to strongly define their goals and priorities, and then would ensure that all tasks rolled up to deliver on those priorities. If the organisation needed to change priorities, the system would automatically recalculate the weights of the tasks and reassign them appropriately. As you can imagine, the interface design was also a very interesting puzzle and one I really enjoyed working on.</li>
+			</ul>
+		</div>
+
+
 	</div>
 </body>
 
