@@ -23,8 +23,7 @@
                 "<all_urls>"
             ],
             "js": [
-                "ii-functions.js",
-                "kaboom.js"
+                "ii-functions.js"
             ]
         }
     ],
