@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Goal Map Browser Prototype</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <h1>Goal Map Browser</h1>
+      <p>Enter a goal. Get an AI overview + a sequenced hallway of pages.</p>
+    </header>
+
+    <main class="layout">
+      <section class="left-panel">
+        <form id="goal-form" class="goal-form">
+          <label for="goal-input">What do you want to learn or achieve?</label>
+          <div class="goal-row">
+            <input
+              id="goal-input"
+              name="goal"
+              type="text"
+              placeholder="I want to understand the history of Jazz"
+              required
+            />
+            <button type="submit">Build Hallway</button>
+          </div>
+        </form>
+
+        <section class="panel ai-panel">
+          <h2>AI Answer</h2>
+          <div id="ai-answer" class="content muted">
+            Your synthesized answer appears here after you enter a goal.
+          </div>
+        </section>
+
+        <section class="panel hallway-panel">
+          <h2>Story Hallway (5–6 tabs)</h2>
+          <ol id="hallway-list" class="hallway-list"></ol>
+        </section>
+      </section>
+
+      <section class="right-panel">
+        <div class="map-toolbar">
+          <h2>Zoomable Map</h2>
+          <div class="toolbar-actions">
+            <button id="zoom-out" type="button">−</button>
+            <button id="zoom-in" type="button">+</button>
+            <button id="reset-view" type="button">Reset</button>
+          </div>
+        </div>
+        <div id="map-shell" class="map-shell">
+          <div id="map-canvas" class="map-canvas"></div>
+        </div>
+        <p class="muted map-help">
+          Click a hallway node to load next-level links from that page and expand the map.
+        </p>
+      </section>
+    </main>
+
+    <template id="hallway-item-template">
+      <li>
+        <button class="hallway-link" type="button"></button>
+      </li>
+    </template>
+
+    <script src="./index.js" type="module"></script>
+  </body>
+</html>
