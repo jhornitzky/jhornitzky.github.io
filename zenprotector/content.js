@@ -4411,6 +4411,10 @@
   document.querySelectorAll(".zenprotector-highlight").forEach((el) => {
     el.replaceWith(document.createTextNode(el.textContent));
   });
+  if (window.__zenprotectorObserver) {
+    window.__zenprotectorObserver.disconnect();
+    window.__zenprotectorObserver = null;
+  }
   var SKIP_TAGS = /* @__PURE__ */ new Set([
     "SCRIPT",
     "STYLE",
@@ -4444,6 +4448,7 @@
   var result = sentiment.analyze(fullText);
   var negativeSet = new Set(result.negative);
   var positiveSet = new Set(result.positive);
+  window.__zenprotectorSets = { negativeSet, positiveSet };
   function processTextNode(textNode) {
     const text = textNode.nodeValue;
     if (!/[a-zA-Z]/.test(text))
@@ -4455,7 +4460,7 @@
     const fragment = document.createDocumentFragment();
     for (const part of parts) {
       const lower = part.toLowerCase();
-      if (negativeSet.has(lower)) {
+      if (window.__zenprotectorSets.negativeSet.has(lower)) {
         hasMatch = true;
         const span = document.createElement("span");
         span.className = "zenprotector-highlight zenprotector-negative";
@@ -4472,7 +4477,7 @@
       `;
         span.title = "Negative sentiment";
         fragment.appendChild(span);
-      } else if (positiveSet.has(lower)) {
+      } else if (window.__zenprotectorSets.positiveSet.has(lower)) {
         hasMatch = true;
         const span = document.createElement("span");
         span.className = "zenprotector-highlight zenprotector-positive";
@@ -4505,26 +4510,57 @@
       return;
     if (node.isContentEditable)
       return;
+    if (node.classList && node.classList.contains("zenprotector-highlight"))
+      return;
     const children = Array.from(node.childNodes);
     for (const child of children)
       walkNode(child);
   }
   walkNode(document.body);
-  var negCount = document.querySelectorAll(".zenprotector-negative").length;
-  var posCount = document.querySelectorAll(".zenprotector-positive").length;
-  var highlightedScore = 0;
-  for (const entry of result.calculation || []) {
-    const [word, val] = Object.entries(entry)[0];
-    if (negativeSet.has(word) || positiveSet.has(word)) {
-      highlightedScore += val;
+  function computeResult() {
+    const negCount = document.querySelectorAll(".zenprotector-negative").length;
+    const posCount = document.querySelectorAll(".zenprotector-positive").length;
+    let highlightedScore = 0;
+    for (const entry of result.calculation || []) {
+      const [word, val] = Object.entries(entry)[0];
+      if (negativeSet.has(word) || positiveSet.has(word)) {
+        highlightedScore += val;
+      }
     }
+    const comparative = highlightedScore / (negCount + posCount || 1);
+    return { negCount, posCount, totalWords: result.tokens.length, score: highlightedScore, comparative };
   }
-  var comparative = highlightedScore / (negCount + posCount || 1);
-  window.__zenprotectorResult = {
-    negCount,
-    posCount,
-    totalWords: result.tokens.length,
-    score: highlightedScore,
-    comparative
-  };
+  window.__zenprotectorResult = computeResult();
+  chrome.storage.local.get("zenprotectorAutoScan", ({ zenprotectorAutoScan }) => {
+    if (!zenprotectorAutoScan)
+      return;
+    let debounceTimer;
+    const observer = new MutationObserver((mutations) => {
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(() => {
+        let hadNewNodes = false;
+        for (const mutation of mutations) {
+          for (const node of mutation.addedNodes) {
+            if (node.nodeType === Node.ELEMENT_NODE) {
+              if (node.classList && node.classList.contains("zenprotector-highlight"))
+                continue;
+              walkNode(node);
+              hadNewNodes = true;
+            }
+          }
+        }
+        if (!hadNewNodes)
+          return;
+        window.__zenprotectorResult = computeResult();
+        const { comparative } = window.__zenprotectorResult;
+        const key = `zenprotector:${location.origin}${location.pathname}`;
+        chrome.storage.local.set({
+          [key]: { ...window.__zenprotectorResult, scannedAt: Date.now(), url: location.href }
+        });
+        chrome.runtime.sendMessage({ type: "updateBadge", comparative });
+      }, 600);
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
+    window.__zenprotectorObserver = observer;
+  });
 })();

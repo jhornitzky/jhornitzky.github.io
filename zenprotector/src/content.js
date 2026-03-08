@@ -7,6 +7,12 @@ document.querySelectorAll('.zenprotector-highlight').forEach(el => {
   el.replaceWith(document.createTextNode(el.textContent));
 });
 
+// Disconnect any previous observer before re-scanning
+if (window.__zenprotectorObserver) {
+  window.__zenprotectorObserver.disconnect();
+  window.__zenprotectorObserver = null;
+}
+
 // ── Collect all visible text and analyse once ────────────────────────────────
 const SKIP_TAGS = new Set([
   'SCRIPT', 'STYLE', 'NOSCRIPT', 'TEXTAREA', 'INPUT',
@@ -32,7 +38,11 @@ const result = sentiment.analyze(fullText);
 const negativeSet = new Set(result.negative);
 const positiveSet = new Set(result.positive);
 
-// ── Walk DOM and highlight matched words ──────────────────────────────────────
+// Expose sets on window so the MutationObserver closure can use them
+// even after esbuild's IIFE has finished executing
+window.__zenprotectorSets = { negativeSet, positiveSet };
+
+// ── Highlight a single text node ─────────────────────────────────────────────
 function processTextNode(textNode) {
   const text = textNode.nodeValue;
   if (!/[a-zA-Z]/.test(text)) return;
@@ -46,7 +56,7 @@ function processTextNode(textNode) {
   for (const part of parts) {
     const lower = part.toLowerCase();
 
-    if (negativeSet.has(lower)) {
+    if (window.__zenprotectorSets.negativeSet.has(lower)) {
       hasMatch = true;
       const span = document.createElement('span');
       span.className = 'zenprotector-highlight zenprotector-negative';
@@ -63,7 +73,7 @@ function processTextNode(textNode) {
       `;
       span.title = 'Negative sentiment';
       fragment.appendChild(span);
-    } else if (positiveSet.has(lower)) {
+    } else if (window.__zenprotectorSets.positiveSet.has(lower)) {
       hasMatch = true;
       const span = document.createElement('span');
       span.className = 'zenprotector-highlight zenprotector-positive';
@@ -95,34 +105,69 @@ function walkNode(node) {
   if (node.nodeType !== Node.ELEMENT_NODE) return;
   if (SKIP_TAGS.has(node.tagName)) return;
   if (node.isContentEditable) return;
+  // Skip nodes already processed
+  if (node.classList && node.classList.contains('zenprotector-highlight')) return;
   const children = Array.from(node.childNodes);
   for (const child of children) walkNode(child);
 }
 
 walkNode(document.body);
 
-// Count actual highlighted spans — ground truth that matches what the user sees
-const negCount = document.querySelectorAll('.zenprotector-negative').length;
-const posCount = document.querySelectorAll('.zenprotector-positive').length;
+// ── Compute results ───────────────────────────────────────────────────────────
+function computeResult() {
+  const negCount = document.querySelectorAll('.zenprotector-negative').length;
+  const posCount = document.querySelectorAll('.zenprotector-positive').length;
 
-// Compute score from only the highlighted words' AFINN values so the
-// comparative isn't diluted by thousands of nav/sidebar/footer tokens.
-// result.calculation is an array of { word: afinnValue } objects.
-let highlightedScore = 0;
-for (const entry of (result.calculation || [])) {
-  const [word, val] = Object.entries(entry)[0];
-  if (negativeSet.has(word) || positiveSet.has(word)) {
-    highlightedScore += val;
+  let highlightedScore = 0;
+  for (const entry of (result.calculation || [])) {
+    const [word, val] = Object.entries(entry)[0];
+    if (negativeSet.has(word) || positiveSet.has(word)) {
+      highlightedScore += val;
+    }
   }
-}
-// Divide by total sentiment-bearing words (avg AFINN score per sentiment word)
-const comparative = highlightedScore / (negCount + posCount || 1);
+  const comparative = highlightedScore / (negCount + posCount || 1);
 
-// Store on window so popup.js can retrieve it via a second executeScript call
-window.__zenprotectorResult = {
-  negCount,
-  posCount,
-  totalWords: result.tokens.length,
-  score: highlightedScore,
-  comparative,
-};
+  return { negCount, posCount, totalWords: result.tokens.length, score: highlightedScore, comparative };
+}
+
+window.__zenprotectorResult = computeResult();
+
+// ── MutationObserver for infinite scroll (auto-scan mode only) ────────────────
+chrome.storage.local.get('zenprotectorAutoScan', ({ zenprotectorAutoScan }) => {
+  if (!zenprotectorAutoScan) return;
+
+  let debounceTimer;
+
+  const observer = new MutationObserver((mutations) => {
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(() => {
+      let hadNewNodes = false;
+
+      for (const mutation of mutations) {
+        for (const node of mutation.addedNodes) {
+          // Skip highlight spans we injected, and non-element/text nodes
+          if (node.nodeType === Node.ELEMENT_NODE) {
+            if (node.classList && node.classList.contains('zenprotector-highlight')) continue;
+            walkNode(node);
+            hadNewNodes = true;
+          }
+        }
+      }
+
+      if (!hadNewNodes) return;
+
+      // Update stored result and notify background to refresh badge
+      window.__zenprotectorResult = computeResult();
+
+      const { comparative } = window.__zenprotectorResult;
+      const key = `zenprotector:${location.origin}${location.pathname}`;
+      chrome.storage.local.set({
+        [key]: { ...window.__zenprotectorResult, scannedAt: Date.now(), url: location.href }
+      });
+      chrome.runtime.sendMessage({ type: 'updateBadge', comparative });
+    }, 600);
+  });
+
+  observer.observe(document.body, { childList: true, subtree: true });
+  window.__zenprotectorObserver = observer;
+});

@@ -29,6 +29,9 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
   if (!zenprotectorAutoScan) return;
 
   try {
+    // Wait for JS-heavy pages to finish rendering before scanning
+    await new Promise(resolve => setTimeout(resolve, 2000));
+
     await chrome.scripting.executeScript({ target: { tabId }, files: ['content.js'] });
 
     const readback = await chrome.scripting.executeScript({
@@ -51,5 +54,12 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
 chrome.tabs.onUpdated.addListener((tabId, changeInfo) => {
   if (changeInfo.status === 'loading') {
     chrome.action.setBadgeText({ text: '', tabId });
+  }
+});
+
+// ── Badge update messages from content script (MutationObserver rescans) ──────
+chrome.runtime.onMessage.addListener((msg, sender) => {
+  if (msg.type === 'updateBadge' && sender.tab?.id) {
+    updateBadge(sender.tab.id, msg.comparative);
   }
 });
