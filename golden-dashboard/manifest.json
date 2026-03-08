@@ -5,10 +5,8 @@
   "description": "Daily link launcher — visit links and they check themselves off.",
   "permissions": ["storage", "tabs"],
   "host_permissions": ["<all_urls>"],
+  "action": {},
   "background": {
     "service_worker": "background.js"
-  },
-  "chrome_url_overrides": {
-    "newtab": "newtab.html"
   }
 }

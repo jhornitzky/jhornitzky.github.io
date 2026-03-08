@@ -1,4 +1,15 @@
 const STORAGE_KEY = "feedDashboardState";
+const DASHBOARD_URL = chrome.runtime.getURL("newtab.html");
+
+chrome.action.onClicked.addListener(async () => {
+  const tabs = await chrome.tabs.query({ url: DASHBOARD_URL });
+  if (tabs.length > 0) {
+    await chrome.tabs.update(tabs[0].id, { active: true });
+    await chrome.windows.update(tabs[0].windowId, { focused: true });
+  } else {
+    await chrome.tabs.create({ url: DASHBOARD_URL });
+  }
+});
 
 chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
   if (changeInfo.status !== "complete") return;
