@@ -1,0 +1,14 @@
+{
+  "manifest_version": 3,
+  "name": "Unfeeder",
+  "version": "2.0.0",
+  "description": "Daily link launcher — visit links and they check themselves off.",
+  "permissions": ["storage", "tabs"],
+  "host_permissions": ["<all_urls>"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "chrome_url_overrides": {
+    "newtab": "newtab.html"
+  }
+}

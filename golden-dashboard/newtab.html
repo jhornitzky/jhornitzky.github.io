@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unfeeder</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <main class="app">
+      <section>
+        <div class="section-actions">
+          <button id="open-all" class="btn-open-all" type="button">Open all unvisited</button>
+          <button id="show-add" class="btn-secondary" type="button">+ Add link</button>
+          <button id="show-settings" class="btn-icon" type="button" title="Settings">⚙</button>
+        </div>
+<ul id="feed-list" class="feed-list"></ul>
+        <button id="toggle-visited" class="btn-toggle-visited hidden" type="button"></button>
+        <ul id="visited-list" class="feed-list visited-list hidden"></ul>
+      </section>
+    </main>
+
+    <div id="modal-backdrop" class="modal-backdrop hidden" aria-hidden="true"></div>
+    <div id="settings-dialog" class="add-dialog hidden">
+      <h2 class="dialog-title">Settings</h2>
+      <div class="dialog-fields">
+        <label class="field">
+          <span>Window width (px)</span>
+          <input id="window-width" type="number" min="320" max="2560" step="10" value="800" />
+        </label>
+      </div>
+      <div class="dialog-actions">
+        <button id="close-settings" class="btn-primary" type="button">Done</button>
+      </div>
+    </div>
+
+    <div id="add-dialog" class="add-dialog hidden">
+      <h2 class="dialog-title">Add link</h2>
+      <div class="dialog-fields">
+        <label class="field">
+          <span>Name</span>
+          <input id="feed-name" type="text" placeholder="e.g. Gmail" maxlength="80" />
+        </label>
+        <label class="field">
+          <span>URL</span>
+          <input id="feed-url" type="url" placeholder="https://example.com" />
+        </label>
+      </div>
+      <div class="dialog-actions">
+        <button id="cancel-add" class="btn-secondary" type="button">Cancel</button>
+        <button id="add-feed" class="btn-primary" type="button">Add link</button>
+      </div>
+    </div>
+
+    <template id="feed-item-template">
+      <li class="feed-item">
+        <div class="feed-meta">
+          <strong class="feed-name"></strong>
+          <a class="feed-url" target="_blank" rel="noopener noreferrer"></a>
+        </div>
+        <div class="feed-actions">
+          <button class="btn-open" type="button">Open</button>
+          <button class="btn-remove" type="button">Remove</button>
+        </div>
+      </li>
+    </template>
+
+    <script src="newtab.js"></script>
+  </body>
+</html>
