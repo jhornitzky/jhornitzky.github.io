@@ -28,6 +28,15 @@
           <span>Window width (px)</span>
           <input id="window-width" type="number" min="320" max="2560" step="10" value="800" />
         </label>
+        <div class="field">
+          <span>Links</span>
+          <div class="settings-row">
+            <button id="export-feeds" class="btn-secondary" type="button">Export JSON</button>
+            <button id="import-feeds" class="btn-secondary" type="button">Import JSON</button>
+            <input id="import-file" type="file" accept=".json" style="display:none" />
+          </div>
+          <div id="import-error" class="import-error hidden"></div>
+        </div>
       </div>
       <div class="dialog-actions">
         <button id="close-settings" class="btn-primary" type="button">Done</button>

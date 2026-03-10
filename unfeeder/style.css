@@ -208,6 +208,17 @@ button:disabled {
   display: none;
 }
 
+.settings-row {
+  display: flex;
+  gap: 8px;
+}
+
+.import-error {
+  font-size: 0.85rem;
+  color: #991b1b;
+  margin-top: 4px;
+}
+
 .btn-toggle-visited {
   margin-top: 14px;
   padding: 0;

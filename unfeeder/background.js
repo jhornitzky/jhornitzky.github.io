@@ -16,14 +16,6 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
   await checkTab(tab.url);
 });
 
-// Backup: also check when the user switches focus to a tab.
-chrome.tabs.onActivated.addListener(async ({ tabId }) => {
-  try {
-    const tab = await chrome.tabs.get(tabId);
-    await checkTab(tab.url);
-  } catch (_) {}
-});
-
 async function checkTab(url) {
   if (!url || !url.startsWith("http")) return;
 
@@ -31,14 +23,15 @@ async function checkTab(url) {
   const state = data[STORAGE_KEY];
   if (!state?.feeds?.length) return;
 
-  const todayKey = getTodayKey();
-  if (!state.completionByDate[todayKey]) state.completionByDate[todayKey] = {};
-
   const match = state.feeds.find((f) => urlMatches(url, f.url));
-  if (!match || state.completionByDate[todayKey][match.id]) return;
+  if (!match) return;
 
-  state.completionByDate[todayKey][match.id] = true;
-  await chrome.storage.local.set({ [STORAGE_KEY]: state });
+  if (!state.visitTimestamps) state.visitTimestamps = {};
+  const todayStartMs = new Date().setHours(0, 0, 0, 0);
+  if (!state.visitTimestamps[match.id] || state.visitTimestamps[match.id] < todayStartMs) {
+    state.visitTimestamps[match.id] = Date.now();
+    await chrome.storage.local.set({ [STORAGE_KEY]: state });
+  }
 }
 
 function urlMatches(tabUrl, feedUrl) {
@@ -52,12 +45,4 @@ function urlMatches(tabUrl, feedUrl) {
   } catch {
     return false;
   }
-}
-
-function getTodayKey() {
-  const now = new Date();
-  const y = now.getFullYear();
-  const m = String(now.getMonth() + 1).padStart(2, "0");
-  const d = String(now.getDate()).padStart(2, "0");
-  return `${y}-${m}-${d}`;
 }

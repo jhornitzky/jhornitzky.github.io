@@ -15,13 +15,16 @@ const settingsDialog = document.getElementById("settings-dialog");
 const closeSettingsButton = document.getElementById("close-settings");
 const windowWidthInput = document.getElementById("window-width");
 const feedList = document.getElementById("feed-list");
+const exportFeedsButton = document.getElementById("export-feeds");
+const importFeedsButton = document.getElementById("import-feeds");
+const importFileInput = document.getElementById("import-file");
+const importError = document.getElementById("import-error");
 const toggleVisitedButton = document.getElementById("toggle-visited");
 const visitedList = document.getElementById("visited-list");
 const feedItemTemplate = document.getElementById("feed-item-template");
 
 let visitedExpanded = false;
 
-const todayKey = getTodayKey();
 let state = { feeds: [], completionByDate: {} };
 
 init().catch((error) => {
@@ -31,7 +34,7 @@ init().catch((error) => {
 
 async function init() {
   state = await loadState();
-  ensureDayBucket(todayKey);
+  ensureDayBucket(getTodayKey());
 
   const settings = await loadSettings();
   windowWidthInput.value = settings.windowWidth;
@@ -49,6 +52,10 @@ async function init() {
     const w = Math.max(320, Math.min(2560, parseInt(windowWidthInput.value, 10) || DEFAULT_WIDTH));
     windowWidthInput.value = w;
   });
+
+  exportFeedsButton.addEventListener("click", exportFeeds);
+  importFeedsButton.addEventListener("click", () => importFileInput.click());
+  importFileInput.addEventListener("change", onImportFile);
 
   toggleVisitedButton.addEventListener("click", () => {
     visitedExpanded = !visitedExpanded;
@@ -75,7 +82,7 @@ async function init() {
   chrome.storage.onChanged.addListener((changes, area) => {
     if (area === "local" && changes[STORAGE_KEY]) {
       state = changes[STORAGE_KEY].newValue;
-      ensureDayBucket(todayKey);
+      ensureDayBucket(getTodayKey());
       render();
     }
   });
@@ -104,15 +111,21 @@ async function saveSettingsAndClose() {
   modalBackdrop.classList.add("hidden");
 }
 
+function isVisitedToday(feedId) {
+  const ts = state.visitTimestamps?.[feedId];
+  if (!ts) return false;
+  const todayStartMs = new Date().setHours(0, 0, 0, 0);
+  return ts >= todayStartMs;
+}
+
 function render() {
-  const completion = state.completionByDate[todayKey] || {};
   feedList.innerHTML = "";
 
-  state.feeds.filter((feed) => !completion[feed.id]).forEach((feed) => {
+  state.feeds.filter((feed) => !isVisitedToday(feed.id)).forEach((feed) => {
     renderFeedItem(feed);
   });
 
-  const unvisitedCount = state.feeds.filter((f) => !completion[f.id]).length;
+  const unvisitedCount = state.feeds.filter((f) => !isVisitedToday(f.id)).length;
   openAllButton.disabled = unvisitedCount === 0;
   openAllButton.textContent = unvisitedCount > 0
     ? `Open all unvisited (${unvisitedCount})`
@@ -127,7 +140,7 @@ function render() {
     feedList.appendChild(empty);
   }
 
-  const visitedFeeds = state.feeds.filter((f) => completion[f.id]);
+  const visitedFeeds = state.feeds.filter((f) => isVisitedToday(f.id));
   if (visitedFeeds.length) {
     toggleVisitedButton.classList.remove("hidden");
     toggleVisitedButton.textContent = visitedExpanded
@@ -154,14 +167,14 @@ function renderFeedItem(feed) {
   urlEl.href = feed.url;
   urlEl.textContent = feed.url;
   urlEl.addEventListener("click", async () => {
-    state.completionByDate[todayKey][feed.id] = true;
+    recordVisitTimestamp(feed.id);
     await saveState();
     render();
   });
 
   openBtn.addEventListener("click", async () => {
     openInWindow(feed.url);
-    state.completionByDate[todayKey][feed.id] = true;
+    recordVisitTimestamp(feed.id);
     await saveState();
     render();
   });
@@ -191,7 +204,7 @@ function renderVisitedItem(feed) {
   removeBtn.textContent = "Untick";
   removeBtn.classList.replace("btn-remove", "btn-untick");
   removeBtn.addEventListener("click", async () => {
-    delete state.completionByDate[todayKey][feed.id];
+    delete state.visitTimestamps[feed.id];
     await saveState();
     render();
   });
@@ -210,8 +223,7 @@ function openInWindow(url) {
 }
 
 async function openAllTiled() {
-  const completion = state.completionByDate[todayKey] || {};
-  const unvisited = state.feeds.filter((f) => !completion[f.id]);
+  const unvisited = state.feeds.filter((f) => !isVisitedToday(f.id));
   if (!unvisited.length) return;
 
   const w = getWindowWidth();
@@ -228,7 +240,7 @@ async function openAllTiled() {
       height: sh,
       type: "popup"
     });
-    state.completionByDate[todayKey][unvisited[i].id] = true;
+    recordVisitTimestamp(unvisited[i].id);
   }
 
   await saveState();
@@ -290,15 +302,78 @@ function getTodayKey() {
 async function loadState() {
   const data = await chrome.storage.local.get(STORAGE_KEY);
   const s = data[STORAGE_KEY];
-  if (!s || typeof s !== "object") return { feeds: [], completionByDate: {} };
+  if (!s || typeof s !== "object") return { feeds: [], completionByDate: {}, visitTimestamps: {}, domainBypass: {} };
   return {
     feeds: Array.isArray(s.feeds) ? s.feeds.filter(isValidFeed) : [],
-    completionByDate: isObject(s.completionByDate) ? s.completionByDate : {}
+    completionByDate: isObject(s.completionByDate) ? s.completionByDate : {},
+    visitTimestamps: isObject(s.visitTimestamps) ? s.visitTimestamps : {},
+    domainBypass: isObject(s.domainBypass) ? s.domainBypass : {}
   };
 }
 
 async function saveState() {
   await chrome.storage.local.set({ [STORAGE_KEY]: state });
+}
+
+function exportFeeds() {
+  const data = state.feeds.map(({ name, url }) => ({ name, url }));
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "unfeeder-links.json";
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+function onImportFile(e) {
+  const file = e.target.files[0];
+  importFileInput.value = "";
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = async (ev) => {
+    importError.classList.add("hidden");
+    let parsed;
+    try {
+      parsed = JSON.parse(ev.target.result);
+    } catch {
+      showImportError("Invalid JSON file.");
+      return;
+    }
+    if (!Array.isArray(parsed)) {
+      showImportError("Expected a JSON array of links.");
+      return;
+    }
+    let added = 0;
+    for (const item of parsed) {
+      if (typeof item.name !== "string" || typeof item.url !== "string") continue;
+      const normalizedUrl = normalizeHttpUrl(item.url);
+      if (!normalizedUrl) continue;
+      if (state.feeds.some((f) => f.url === normalizedUrl)) continue;
+      state.feeds.push({ id: crypto.randomUUID(), name: item.name.trim(), url: normalizedUrl });
+      added++;
+    }
+    if (added === 0) {
+      showImportError("No new valid links found in file.");
+      return;
+    }
+    await saveState();
+    render();
+  };
+  reader.readAsText(file);
+}
+
+function showImportError(msg) {
+  importError.textContent = msg;
+  importError.classList.remove("hidden");
+}
+
+function recordVisitTimestamp(feedId) {
+  const existing = state.visitTimestamps[feedId];
+  const todayStartMs = new Date().setHours(0, 0, 0, 0);
+  if (!existing || existing < todayStartMs) {
+    state.visitTimestamps[feedId] = Date.now();
+  }
 }
 
 function isObject(v) { return v && typeof v === "object" && !Array.isArray(v); }
