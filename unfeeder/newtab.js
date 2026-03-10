@@ -111,6 +111,10 @@ async function saveSettingsAndClose() {
   modalBackdrop.classList.add("hidden");
 }
 
+function formatTimestamp(ts) {
+  return new Date(ts).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+}
+
 function isVisitedToday(feedId) {
   const ts = state.visitTimestamps?.[feedId];
   if (!ts) return false;
@@ -166,6 +170,8 @@ function renderFeedItem(feed) {
   nameEl.textContent = feed.name;
   urlEl.href = feed.url;
   urlEl.textContent = feed.url;
+  const ts = state.visitTimestamps?.[feed.id];
+  node.querySelector(".feed-timestamp").textContent = ts ? formatTimestamp(ts) : "";
   urlEl.addEventListener("click", async () => {
     recordVisitTimestamp(feed.id);
     await saveState();
@@ -199,6 +205,8 @@ function renderVisitedItem(feed) {
   const urlEl = node.querySelector(".feed-url");
   urlEl.href = feed.url;
   urlEl.textContent = feed.url;
+  const ts = state.visitTimestamps?.[feed.id];
+  node.querySelector(".feed-timestamp").textContent = ts ? formatTimestamp(ts) : "";
   node.querySelector(".btn-open").addEventListener("click", () => openInWindow(feed.url));
   const removeBtn = node.querySelector(".btn-remove");
   removeBtn.textContent = "Untick";

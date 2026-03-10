@@ -51,7 +51,7 @@ function showChallenge(hostname) {
   overlay.innerHTML = `
     <div style="max-width:400px;width:90%;text-align:center;padding:40px 20px;">
       <div style="font-size:2.4rem;margin-bottom:12px;">🔒</div>
-      <h2 style="margin:0 0 10px;font-size:1.4rem;font-weight:700;">Reading time's up</h2>
+      <h2 style="margin:0 0 10px;font-size:1.4rem;font-weight:400;color:#94a3b8;">Reading time's up</h2>
       <p style="color:#94a3b8;margin:0 0 28px;font-size:0.95rem;line-height:1.5;">
         You've already read from <strong style="color:#e2e8f0;">${hostname}</strong> today.<br>
         Solve this to unlock 1 more hour.
