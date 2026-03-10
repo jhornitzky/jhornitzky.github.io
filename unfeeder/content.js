@@ -49,22 +49,22 @@ function showChallenge(hostname) {
   ].join(";");
 
   overlay.innerHTML = `
-    <div style="max-width:400px;width:90%;text-align:center;padding:40px 20px;">
-      <div style="font-size:2.4rem;margin-bottom:12px;">🔒</div>
-      <h2 style="margin:0 0 10px;font-size:1.4rem;font-weight:400;color:#FFFFFF;">Reading time's up</h2>
-      <p style="color:#94a3b8;margin:0 0 28px;font-size:0.95rem;line-height:1.5;">
+    <div style="max-width:400px;width:90%;text-align:center;padding:40px 20px;font-size:16px;">
+      <div style="font-size:38px;margin-bottom:12px;">🔒</div>
+      <h2 style="margin:0 0 10px;font-size:22px;font-weight:400;color:#FFFFFF;">Reading time's up</h2>
+      <p style="color:#94a3b8;margin:0 0 28px;font-size:15px;line-height:1.5;">
         You've already read from <strong style="color:#e2e8f0;">${hostname}</strong> today.<br>
         Solve this to unlock 1 more hour.
       </p>
-      <div style="font-size:2.6rem;font-weight:800;letter-spacing:0.02em;margin-bottom:24px;">${question}</div>
+      <div style="font-size:42px;font-weight:800;letter-spacing:0.02em;margin-bottom:24px;">${question}</div>
       <input id="unfeeder-input" type="number" placeholder="Your answer"
         style="width:100%;padding:14px;border-radius:10px;border:2px solid #334155;
-               background:#1e293b;color:#f8fafc;font-size:1.2rem;text-align:center;
+               background:#1e293b;color:#f8fafc;font-size:19px;text-align:center;
                outline:none;box-sizing:border-box;" />
-      <div id="unfeeder-error" style="color:#f87171;margin-top:10px;min-height:1.4em;font-size:0.9rem;"></div>
+      <div id="unfeeder-error" style="color:#f87171;margin-top:10px;min-height:22px;font-size:14px;"></div>
       <button id="unfeeder-submit"
         style="margin-top:14px;width:100%;padding:14px;background:#2563eb;color:#fff;
-               border:none;border-radius:10px;font-size:1rem;font-weight:600;cursor:pointer;">
+               border:none;border-radius:10px;font-size:16px;font-weight:600;cursor:pointer;">
         Unlock for 1 hour
       </button>
     </div>
