@@ -54,7 +54,7 @@ function showChallenge(hostname) {
       <h2 style="margin:0 0 10px;font-size:22px;font-weight:400;color:#FFFFFF;">Reading time's up</h2>
       <p style="color:#94a3b8;margin:0 0 28px;font-size:15px;line-height:1.5;">
         You've already read from <strong style="color:#e2e8f0;">${hostname}</strong> today.<br>
-        Solve this to unlock 1 more hour.
+        Solve this to unlock 30 more minutes.
       </p>
       <div style="font-size:42px;font-weight:800;letter-spacing:0.02em;margin-bottom:24px;">${question}</div>
       <input id="unfeeder-input" type="number" placeholder="Your answer"
@@ -65,7 +65,7 @@ function showChallenge(hostname) {
       <button id="unfeeder-submit"
         style="margin-top:14px;width:100%;padding:14px;background:#2563eb;color:#fff;
                border:none;border-radius:10px;font-size:16px;font-weight:600;cursor:pointer;">
-        Unlock for 1 hour
+        Unlock for 30 minutes
       </button>
     </div>
   `;

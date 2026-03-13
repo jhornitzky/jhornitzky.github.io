@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <!-- Background -->
+  <rect width="128" height="128" rx="24" fill="#0f172a"/>
+  <!-- RSS-style feed arcs radiating from bottom-left, representing a "feed" -->
+  <!-- Dot -->
+  <circle cx="32" cy="96" r="9" fill="#38bdf8"/>
+  <!-- Small arc -->
+  <path d="M32 74 A22 22 0 0 1 54 96" fill="none" stroke="#38bdf8" stroke-width="9" stroke-linecap="round"/>
+  <!-- Medium arc -->
+  <path d="M32 52 A44 44 0 0 1 76 96" fill="none" stroke="#38bdf8" stroke-width="9" stroke-linecap="round"/>
+  <!-- Large arc -->
+  <path d="M32 30 A66 66 0 0 1 98 96" fill="none" stroke="#38bdf8" stroke-width="9" stroke-linecap="round"/>
+  <!-- Diagonal slash — the "un" in unfeeder -->
+  <line x1="22" y1="108" x2="108" y2="22" stroke="#f87171" stroke-width="11" stroke-linecap="round"/>
+</svg>

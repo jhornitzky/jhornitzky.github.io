@@ -2,10 +2,23 @@
   "manifest_version": 3,
   "name": "Unfeeder",
   "version": "2.0.0",
-  "description": "Daily link launcher — visit links and they check themselves off.",
+  "description": "Take back your attention. Add your feeds, check them once per day and then unfeeder will hide them until the next day.",
   "permissions": ["storage", "tabs"],
   "host_permissions": ["<all_urls>"],
-  "action": {},
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "action": {
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
   "background": {
     "service_worker": "background.js"
   },
