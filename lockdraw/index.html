@@ -1,105 +1,561 @@
-<html>
-    <head>
-        <meta charset="UTF-8">
-        <title>Lockdraw - trace a picture on your phone or tablet</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-        <script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
-        <script src="https://cdn.tailwindcss.com"></script>
-    </head>
-    <body class="bg-slate-500"> 
-        <div class="lock-toggle fixed top-5 left-5 h-20 w-20 py-3 z-50 text-5xl text-center rounded-full bg-emerald-200">
-            <span class="lock-icon inline-block align-middle">🔓</span>
-        </div>
-        <div class="canvas fixed left-0 right-0 top-0 bottom-0">
-            <div id="gesture-area" class="resize-drag box-border" style="touch-action: none;">
-                <img id="scale-element" src=""/>
-            </div>
-        </div>
-        <div class="controls fixed bottom-5 left-5 right-5 p-5 bg-black opacity-50 rounded-full overflow-hidden">
-            <label class="text-white font-bold">Choose image to trace</label>
-            <input id="image-upload" class="text-white" type="file" name="image-upload" accept=".jpg, .jpeg, .png, .webp"/> 
-        </div>
-    </body>
-    <script type="text/javascript">
-        //drag listener
-        function dragMoveListener(event) {
-            var target = event.target
-            // keep the dragged position in the data-x/data-y attributes
-            var x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx
-            var y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Lockdraw</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-            // translate the element
-            target.style.transform = 'translate(' + x + 'px, ' + y + 'px)'
+    html, body {
+      width: 100%; height: 100%;
+      overflow: hidden;
+      background: #111;
+      font-family: system-ui, sans-serif;
+      touch-action: none;
+      user-select: none;
+      -webkit-user-select: none;
+    }
 
-            // update the posiion attributes
-            target.setAttribute('data-x', x)
-            target.setAttribute('data-y', y)
-        }
+    #canvas {
+      position: fixed;
+      inset: 0;
+      overflow: hidden;
+    }
 
-        // this function is used later in the resizing and gesture demos
-        window.dragMoveListener = dragMoveListener
+    /* ── Layers ── */
+    .layer {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform-origin: center center;
+      cursor: grab;
+      touch-action: none;
+    }
+    .layer img {
+      display: block;
+      max-width: 80vw;
+      max-height: 70vh;
+      pointer-events: none;
+      -webkit-user-drag: none;
+    }
+    .layer .delete-btn {
+      position: absolute;
+      top: -14px;
+      right: -14px;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: #ef4444;
+      color: #fff;
+      border: none;
+      font-size: 16px;
+      line-height: 28px;
+      text-align: center;
+      cursor: pointer;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .layer.locked-layer {
+      pointer-events: none;
+    }
 
-        //resize, drag and drop
-        var angleScale = {
-                angle: 0,
-                scale: 1
-            }
-            var gestureArea = document.getElementById('gesture-area')
-            var scaleElement = document.getElementById('scale-element')
-            var resetTimeout
+    /* ── Lock track ── */
+    #lock-track {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 56px;
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      padding: 0 8px;
+      background: rgba(0,0,0,0.45);
+      backdrop-filter: blur(4px);
+    }
 
-            interact(gestureArea)
-                .gesturable({
-                    listeners: {
-                        start(event) {
-                            angleScale.angle -= event.angle
+    #lock-rail {
+      position: relative;
+      flex: 1;
+      height: 8px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 4px;
+    }
 
-                            clearTimeout(resetTimeout)
-                            scaleElement.classList.remove('reset')
-                        },
-                        move(event) {
-                            // document.body.appendChild(new Text(event.scale))
-                            var currentAngle = event.angle + angleScale.angle
-                            var currentScale = event.scale * angleScale.scale
+    #lock-slider {
+      position: absolute;
+      top: 50%;
+      left: 0;
+      transform: translateY(-50%);
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      cursor: pointer;
+      touch-action: none;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+      transition: background 0.2s;
+      z-index: 1;
+    }
 
-                            scaleElement.style.transform =
-                                'rotate(' + currentAngle + 'deg)' + 'scale(' + currentScale + ')'
+    /* Progress ring on slider */
+    #lock-slider svg {
+      position: absolute;
+      inset: -3px;
+      width: 46px;
+      height: 46px;
+      pointer-events: none;
+      transform: rotate(-90deg);
+    }
+    #lock-slider svg circle {
+      fill: none;
+      stroke: #22c55e;
+      stroke-width: 3;
+      stroke-linecap: round;
+      stroke-dasharray: 138; /* 2π * 22 ≈ 138 */
+      stroke-dashoffset: 138;
+      transition: stroke-dashoffset 0.1s linear;
+    }
 
-                            // uses the dragMoveListener from the draggable demo above
-                            dragMoveListener(event)
-                        },
-                        end(event) {
-                            angleScale.angle = angleScale.angle + event.angle
-                            angleScale.scale = angleScale.scale * event.scale
+    #lock-label {
+      color: rgba(255,255,255,0.5);
+      font-size: 11px;
+      white-space: nowrap;
+      padding: 0 10px;
+      pointer-events: none;
+    }
 
-                            resetTimeout = setTimeout(reset, 1000)
-                            scaleElement.classList.add('reset')
-                        }
-                    }
-                })
-                .draggable({
-                    listeners: { move: dragMoveListener }
-                })
+    /* ── Add button ── */
+    #add-btn {
+      position: fixed;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 9000;
+      background: #22c55e;
+      color: #fff;
+      border: none;
+      border-radius: 999px;
+      padding: 12px 28px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    #add-btn.hidden { display: none; }
 
-            function reset() {
-                scaleElement.style.transform = 'scale(1)'
+    #file-input { display: none; }
 
-                angleScale.angle = 0
-                angleScale.scale = 1
-            }
+    /* Empty state */
+    #empty-hint {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: rgba(255,255,255,0.25);
+      font-size: 15px;
+      gap: 8px;
+      pointer-events: none;
+      z-index: 100;
+    }
+    #empty-hint.hidden { display: none; }
+    #empty-hint .big { font-size: 48px; }
+  </style>
+</head>
+<body>
 
-        //image setup
-        let imageUpload = document.getElementById("image-upload");
-        // display file name if file has been selected
-        imageUpload.onchange = function () {
-            let input = this.files[0];
-            if (input) {
-                const reader = new FileReader();
-                reader.addEventListener('load', (event) => {
-                    document.getElementById("scale-element").src = event.target.result;
-                });
-                reader.readAsDataURL(input);
-            } 
-        };
-    </script>
+<div id="canvas"></div>
+
+<div id="lock-track">
+  <span id="lock-label">slide to lock →</span>
+  <div id="lock-rail">
+    <div id="lock-slider">
+      <span id="lock-icon">🔓</span>
+      <svg viewBox="0 0 46 46"><circle cx="23" cy="23" r="22" id="progress-ring"/></svg>
+    </div>
+  </div>
+</div>
+
+<button id="add-btn">
+  <span>＋</span> Add Image
+</button>
+<input type="file" id="file-input" accept="image/*" multiple>
+
+<div id="empty-hint">
+  <span class="big">🖼️</span>
+  <span>Tap <b>Add Image</b> to begin</span>
+</div>
+
+<script>
+'use strict';
+
+// ── State ─────────────────────────────────────────────────────────────────
+const state = {
+  layers: [],   // {id, el, x, y, scale, zIndex}
+  locked: false,
+  wakeLock: null,
+  nextZ: 1,
+  nextId: 0,
+};
+
+// ── DOM refs ──────────────────────────────────────────────────────────────
+const canvas    = document.getElementById('canvas');
+const addBtn    = document.getElementById('add-btn');
+const fileInput = document.getElementById('file-input');
+const emptyHint = document.getElementById('empty-hint');
+const lockSlider  = document.getElementById('lock-slider');
+const lockRail    = document.getElementById('lock-rail');
+const lockLabel   = document.getElementById('lock-label');
+const lockIcon    = document.getElementById('lock-icon');
+const progressRing = document.getElementById('progress-ring');
+
+// ── Helpers ───────────────────────────────────────────────────────────────
+function dist(p1, p2) {
+  const dx = p1.clientX - p2.clientX;
+  const dy = p1.clientY - p2.clientY;
+  return Math.sqrt(dx * dx + dy * dy);
+}
+function midpoint(p1, p2) {
+  return { x: (p1.clientX + p2.clientX) / 2, y: (p1.clientY + p2.clientY) / 2 };
+}
+function applyTransform(layer) {
+  // Centre the element then offset
+  layer.el.style.transform = `translate(calc(-50% + ${layer.x}px), calc(-50% + ${layer.y}px)) scale(${layer.scale})`;
+}
+
+// ── Layer management ──────────────────────────────────────────────────────
+function updateEmptyHint() {
+  emptyHint.classList.toggle('hidden', state.layers.length > 0);
+}
+
+function addLayer(file) {
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const id = state.nextId++;
+    const zIndex = state.nextZ++;
+
+    const el = document.createElement('div');
+    el.className = 'layer';
+    el.style.zIndex = zIndex;
+
+    const img = document.createElement('img');
+    img.src = e.target.result;
+    img.draggable = false;
+
+    const delBtn = document.createElement('button');
+    delBtn.className = 'delete-btn';
+    delBtn.innerHTML = '✕';
+    delBtn.addEventListener('pointerdown', (ev) => {
+      ev.stopPropagation();
+      deleteLayer(id);
+    });
+
+    el.appendChild(img);
+    el.appendChild(delBtn);
+    canvas.appendChild(el);
+
+    const layer = { id, el, x: 0, y: 0, scale: 1, zIndex };
+    state.layers.push(layer);
+    applyTransform(layer);
+    initLayerTouch(layer);
+    updateEmptyHint();
+  };
+  reader.readAsDataURL(file);
+}
+
+function deleteLayer(id) {
+  const idx = state.layers.findIndex(l => l.id === id);
+  if (idx === -1) return;
+  state.layers[idx].el.remove();
+  state.layers.splice(idx, 1);
+  updateEmptyHint();
+}
+
+function bringToFront(layer) {
+  layer.zIndex = state.nextZ++;
+  layer.el.style.zIndex = layer.zIndex;
+}
+
+// ── Per-layer touch handling ───────────────────────────────────────────────
+function initLayerTouch(layer) {
+  const el = layer.el;
+  // Map of active pointers on this element
+  const pointers = new Map(); // pointerId → {x, y}
+
+  // State for 2-finger gesture
+  let lastDist = null;
+  let lastMid  = null;
+
+  function getPoints() { return [...pointers.values()]; }
+
+  el.addEventListener('pointerdown', (e) => {
+    if (state.locked) return;
+    e.stopPropagation();
+    el.setPointerCapture(e.pointerId);
+    pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    bringToFront(layer);
+
+    // Reset gesture references when finger count changes
+    const pts = getPoints();
+    if (pts.length === 2) {
+      lastDist = dist({ clientX: pts[0].x, clientY: pts[0].y },
+                      { clientX: pts[1].x, clientY: pts[1].y });
+      lastMid  = { x: (pts[0].x + pts[1].x) / 2, y: (pts[0].y + pts[1].y) / 2 };
+    } else {
+      lastDist = null;
+      lastMid  = null;
+    }
+  });
+
+  el.addEventListener('pointermove', (e) => {
+    if (state.locked) return;
+    if (!pointers.has(e.pointerId)) return;
+
+    const prev = pointers.get(e.pointerId);
+    const curr = { x: e.clientX, y: e.clientY };
+    pointers.set(e.pointerId, curr);
+
+    const pts = getPoints();
+
+    if (pts.length === 1) {
+      // Single-finger drag
+      layer.x += curr.x - prev.x;
+      layer.y += curr.y - prev.y;
+    } else if (pts.length === 2) {
+      // Two-finger pinch + drag
+      const newDist = dist({ clientX: pts[0].x, clientY: pts[0].y },
+                           { clientX: pts[1].x, clientY: pts[1].y });
+      const newMid  = { x: (pts[0].x + pts[1].x) / 2, y: (pts[0].y + pts[1].y) / 2 };
+
+      if (lastDist !== null && lastMid !== null) {
+        const scaleFactor = newDist / lastDist;
+        layer.scale = Math.max(0.05, Math.min(20, layer.scale * scaleFactor));
+        layer.x += newMid.x - lastMid.x;
+        layer.y += newMid.y - lastMid.y;
+      }
+      lastDist = newDist;
+      lastMid  = newMid;
+    }
+
+    applyTransform(layer);
+  });
+
+  function onEnd(e) {
+    pointers.delete(e.pointerId);
+    // Reset gesture state so single-finger drag resumes cleanly
+    lastDist = null;
+    lastMid  = null;
+  }
+
+  el.addEventListener('pointerup', onEnd);
+  el.addEventListener('pointercancel', onEnd);
+
+  // Desktop: scroll wheel to zoom
+  el.addEventListener('wheel', (e) => {
+    if (state.locked) return;
+    e.preventDefault();
+    const factor = e.deltaY < 0 ? 1.1 : 0.9;
+    layer.scale = Math.max(0.05, Math.min(20, layer.scale * factor));
+    applyTransform(layer);
+  }, { passive: false });
+}
+
+// ── Add button / file input ────────────────────────────────────────────────
+addBtn.addEventListener('click', () => fileInput.click());
+fileInput.addEventListener('change', (e) => {
+  Array.from(e.target.files).forEach(addLayer);
+  fileInput.value = '';
+});
+
+// ── Lock slider ────────────────────────────────────────────────────────────
+const HOLD_MS = 3000;
+const RING_CIRCUMFERENCE = 138; // 2π × 22
+
+let sliderX = 0;      // current pixel offset within rail
+let isDraggingSlider = false;
+let sliderPointerId = null;
+let sliderDragStart = null;  // { clientX, sliderX }
+let holdTimer = null;
+let holdStart = null;
+let holdAnimFrame = null;
+
+function railWidth() {
+  return lockRail.getBoundingClientRect().width - 40; // minus slider width
+}
+
+function setSliderX(x) {
+  sliderX = Math.max(0, Math.min(railWidth(), x));
+  lockSlider.style.left = sliderX + 'px';
+}
+
+function stopHold() {
+  clearTimeout(holdTimer);
+  holdTimer = null;
+  holdStart = null;
+  if (holdAnimFrame) { cancelAnimationFrame(holdAnimFrame); holdAnimFrame = null; }
+  progressRing.style.strokeDashoffset = RING_CIRCUMFERENCE;
+}
+
+function startHold(onComplete) {
+  holdStart = performance.now();
+  const animate = (now) => {
+    const elapsed = now - holdStart;
+    const fraction = Math.min(elapsed / HOLD_MS, 1);
+    progressRing.style.strokeDashoffset = RING_CIRCUMFERENCE * (1 - fraction);
+    if (fraction < 1) {
+      holdAnimFrame = requestAnimationFrame(animate);
+    }
+  };
+  holdAnimFrame = requestAnimationFrame(animate);
+  holdTimer = setTimeout(() => {
+    holdTimer = null;
+    onComplete();
+  }, HOLD_MS);
+}
+
+function snapSlider(toEnd) {
+  lockSlider.style.transition = 'left 0.25s ease';
+  setSliderX(toEnd ? railWidth() : 0);
+  setTimeout(() => lockSlider.style.transition = '', 260);
+}
+
+function lockScreen() {
+  state.locked = true;
+  lockIcon.textContent = '🔒';
+  lockLabel.textContent = '← slide to unlock';
+  addBtn.classList.add('hidden');
+  // Hide delete buttons
+  document.querySelectorAll('.delete-btn').forEach(b => b.style.display = 'none');
+  // Prevent layer interaction
+  document.querySelectorAll('.layer').forEach(l => l.classList.add('locked-layer'));
+  snapSlider(true);
+  acquireWakeLock();
+  setBrightness(true);
+}
+
+function unlockScreen() {
+  state.locked = false;
+  lockIcon.textContent = '🔓';
+  lockLabel.textContent = 'slide to lock →';
+  addBtn.classList.remove('hidden');
+  document.querySelectorAll('.delete-btn').forEach(b => b.style.display = '');
+  document.querySelectorAll('.layer').forEach(l => l.classList.remove('locked-layer'));
+  snapSlider(false);
+  releaseWakeLock();
+  setBrightness(false);
+}
+
+lockSlider.addEventListener('pointerdown', (e) => {
+  e.stopPropagation();
+  e.preventDefault();
+  lockSlider.setPointerCapture(e.pointerId);
+  isDraggingSlider = true;
+  sliderPointerId = e.pointerId;
+  sliderDragStart = { clientX: e.clientX, startX: sliderX };
+  stopHold();
+});
+
+lockSlider.addEventListener('pointermove', (e) => {
+  if (!isDraggingSlider || e.pointerId !== sliderPointerId) return;
+  const dx = e.clientX - sliderDragStart.clientX;
+  const newX = sliderDragStart.startX + dx;
+  setSliderX(newX);
+
+  const rw = railWidth();
+  const atRightEnd = sliderX >= rw - 2;
+  const atLeftEnd  = sliderX <= 2;
+
+  if (!state.locked && atRightEnd && !holdTimer) {
+    startHold(lockScreen);
+  } else if (state.locked && atLeftEnd && !holdTimer) {
+    startHold(unlockScreen);
+  } else if (holdTimer && !atRightEnd && !atLeftEnd) {
+    stopHold();
+  }
+});
+
+lockSlider.addEventListener('pointerup', (e) => {
+  if (e.pointerId !== sliderPointerId) return;
+  isDraggingSlider = false;
+  sliderPointerId = null;
+  stopHold();
+
+  const rw = railWidth();
+  const atRightEnd = sliderX >= rw - 2;
+  const atLeftEnd  = sliderX <= 2;
+
+  if (!atRightEnd && !atLeftEnd) {
+    // Snap back to appropriate end
+    snapSlider(state.locked);
+  }
+});
+
+lockSlider.addEventListener('pointercancel', (e) => {
+  isDraggingSlider = false;
+  stopHold();
+  snapSlider(state.locked);
+});
+
+// ── Wake Lock ──────────────────────────────────────────────────────────────
+async function acquireWakeLock() {
+  try {
+    if ('wakeLock' in navigator) {
+      state.wakeLock = await navigator.wakeLock.request('screen');
+    }
+  } catch (e) {
+    console.warn('Wake lock failed:', e);
+  }
+}
+
+function releaseWakeLock() {
+  if (state.wakeLock) {
+    state.wakeLock.release().catch(() => {});
+    state.wakeLock = null;
+  }
+}
+
+// Re-acquire wake lock if page becomes visible again (iOS)
+document.addEventListener('visibilitychange', () => {
+  if (state.locked && document.visibilityState === 'visible') {
+    acquireWakeLock();
+  }
+});
+
+// ── Brightness ─────────────────────────────────────────────────────────────
+// The Screen Brightness API is not yet broadly available.
+// We maximise perceived brightness by setting the document background
+// to white at a very low opacity overlay, and use the CSS filter trick.
+let brightnessOverlay = null;
+
+function setBrightness(high) {
+  if (high) {
+    // Try Screen Brightness API (Chrome origin trial / future)
+    if (navigator.screen && 'brightness' in navigator.screen) {
+      try { navigator.screen.brightness = 1.0; } catch (_) {}
+    }
+    // Visual: remove dark bg tint so images appear brighter
+    document.body.style.background = '#fff';
+    canvas.style.filter = 'brightness(1.05)';
+  } else {
+    if (navigator.screen && 'brightness' in navigator.screen) {
+      try { navigator.screen.brightness = 0.5; } catch (_) {}
+    }
+    document.body.style.background = '#111';
+    canvas.style.filter = '';
+  }
+}
+</script>
+</body>
 </html>
