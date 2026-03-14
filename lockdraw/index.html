@@ -533,6 +533,14 @@ document.addEventListener('visibilitychange', () => {
   }
 });
 
+// ── Beforeunload guard ─────────────────────────────────────────────────────
+window.addEventListener('beforeunload', (e) => {
+  if (state.layers.length > 0) {
+    e.preventDefault();
+    e.returnValue = '';
+  }
+});
+
 // ── Brightness ─────────────────────────────────────────────────────────────
 // The Screen Brightness API is not yet broadly available.
 // We maximise perceived brightness by setting the document background
