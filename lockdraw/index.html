@@ -259,7 +259,7 @@ function addLayer(file) {
     delBtn.innerHTML = '✕';
     delBtn.addEventListener('pointerdown', (ev) => {
       ev.stopPropagation();
-      deleteLayer(id);
+      if (confirm('Remove this image?')) deleteLayer(id);
     });
 
     el.appendChild(img);
